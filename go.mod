@@ -1,13 +1,15 @@
-module github.com/sheenazien8/galaplate
+module github.com/galaplate/galaplate
 
 go 1.22.1
 
-require github.com/gofiber/fiber/v2 v2.52.5
+require (
+	github.com/galaplate/core v0.0.0-20250829163216-adcb32a116e2
+	github.com/gofiber/fiber/v2 v2.52.5
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
-	github.com/galaplate/core v0.0.0-20250829163216-adcb32a116e2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.0 // indirect

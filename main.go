@@ -7,7 +7,7 @@ import (
 	"github.com/galaplate/core/config"
 	"github.com/galaplate/core/console"
 	"github.com/galaplate/core/logger"
-	"github.com/sheenazien8/galaplate/router"
+	"github.com/galaplate/galaplate/router"
 )
 
 func main() {

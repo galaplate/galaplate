@@ -1,10 +1,10 @@
 package router
 
 import (
+	"github.com/galaplate/galaplate/middleware"
+	"github.com/galaplate/galaplate/pkg/controllers"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/sheenazien8/galaplate/middleware"
-	"github.com/sheenazien8/galaplate/pkg/controllers"
 )
 
 func SetupRouter(app *fiber.App) {

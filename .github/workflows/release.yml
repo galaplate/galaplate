@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+        
+    - name: Generate changelog
+      id: changelog
+      run: |
+        if [ -f CHANGELOG.md ]; then
+          # Extract changelog for this version
+          awk '/^## \[/{if(p) exit; p=1; next} p' CHANGELOG.md > release_notes.txt
+        else
+          echo "Release ${{ github.ref_name }}" > release_notes.txt
+        fi
+        
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        body_path: release_notes.txt
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -426,7 +426,7 @@ func JWTAuth() fiber.Handler {
 
 ## Next Steps
 
-- **[Controllers](/controllers)** - Learn how to create API controllers
-- **[Middleware](/middleware)** - Implement authentication and other middleware
-- **[Validation](/validation)** - Add request validation
-- **[Examples](/examples)** - See complete API examples
+- **[Console Commands](/console-commands)** - Generate controllers and other components
+- **[Routing](/routings)** - Learn about route definitions and middleware
+- **[Validation & DTOs](/validation-and-dto)** - Add request validation
+- **[Database](/database)** - Work with data models and migrations

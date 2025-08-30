@@ -9,7 +9,7 @@
 - 📦 **Clean Architecture** - Well-organized project structure
 - ⏰ **Background Tasks** - Queue system and CRON scheduler
 
-[GitHub](https://github.com/sheenazien8/galaplate)
+[GitHub](https://github.com/galaplate/cli)
 [Get Started](/quick-start)
 
 ![color](#f0f0f0)

@@ -116,3 +116,10 @@ func SetupRouter(app *fiber.App) {
 - Apply middleware at the group or route level as needed
 - Keep controller logic in `pkg/controllers/`
 - Use clear, RESTful route naming
+
+## Next Steps
+
+- **[Controllers](/console-commands)** - Learn about generating controllers
+- **[Middleware](/middleware)** - Understand authentication and other middleware
+- **[API Reference](/api-reference)** - See complete API endpoint examples
+- **[Validation & DTOs](/validation-and-dto)** - Add request validation to your routes

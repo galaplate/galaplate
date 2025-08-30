@@ -109,7 +109,8 @@ Ready to build something amazing? Let's get you started:
 
 ## Community & Support
 
-- **GitHub**: [sheenazien8/galaplate](https://github.com/sheenazien8/galaplate)
+- **CLI Repository**: [galaplate/cli](https://github.com/galaplate/cli)
+- **Main Repository**: [sheenazien8/galaplate](https://github.com/galaplate/galaplate)
 - **Issues**: Report bugs and request features
 - **Discussions**: Ask questions and share ideas
 

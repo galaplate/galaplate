@@ -73,6 +73,6 @@ BASIC_AUTH_PASSWORD=secure_admin_password
 ## Next Steps
 
 - **[Database](/database)** - Configure database connections
-- **[Authentication](/authentication)** - Set up authentication
-- **[Deployment](/production-setup)** - Production configuration
-- **[Environment Variables](/environment-variables)** - Complete variable reference
+- **[Console Commands](/console-commands)** - Learn about code generation
+- **[Project Structure](/project-structure)** - Understand the codebase
+- **[Quick Start](/quick-start)** - Get your application running

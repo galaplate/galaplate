@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"github.com/galaplate/core/bootstrap"
-	"github.com/galaplate/core/config"
 	"github.com/galaplate/core/console"
+	config "github.com/galaplate/core/env"
 	"github.com/galaplate/core/logger"
 	"github.com/galaplate/galaplate/router"
 )
@@ -21,9 +21,17 @@ func main() {
 		return
 	}
 
-	// Configure bootstrap with our router
 	cfg := bootstrap.DefaultConfig()
 	cfg.SetupRoutes = router.SetupRouter
+    // Optional: Customize GORM configuration
+    // cfg.DatabaseConfig = &bootstrap.DatabaseConfig{
+    //     GormConfig: &bootstrap.GormConfig{
+    //         Config: gorm.Config{
+    //             PrepareStmt: true,
+    //             DisableForeignKeyConstraintWhenMigrating: true,
+    //         },
+    //     },
+    // }
 
 	app := bootstrap.App(cfg)
 	port := config.Get("APP_PORT")

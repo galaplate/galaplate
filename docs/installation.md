@@ -31,56 +31,50 @@ Choose one of the following databases:
 The easiest way to get started with Galaplate:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/sheenazien8/galaplate/master/install.sh | bash
+curl -s https://raw.githubusercontent.com/galaplate/cli/main/install.sh -o /tmp/install.sh && chmod +x /tmp/install.sh && sudo /tmp/install.sh
 ```
 
 This script will:
-- Download the latest Galaplate release
-- Install the CLI tool to your `$GOPATH/bin`
+- Download the latest Galaplate CLI release
+- Install the CLI tool to `/usr/local/bin`
 - Set up necessary permissions
 - Verify the installation
 
-### Method 2: Go Install
-
-Install directly using Go's package manager:
+#### Alternative: Install to Custom Directory
 
 ```bash
-go install github.com/sheenazien8/galaplate/cmd/galaplate@latest
+curl -s https://raw.githubusercontent.com/galaplate/cli/main/install.sh -o /tmp/install.sh && chmod +x /tmp/install.sh && sudo /tmp/install.sh -d ~/.local/bin
 ```
 
-Make sure your `$GOPATH/bin` is in your `$PATH`:
+#### Install Specific Version
 
 ```bash
-# Add to your shell profile (.bashrc, .zshrc, etc.)
-export PATH=$PATH:$(go env GOPATH)/bin
+curl -s https://raw.githubusercontent.com/galaplate/cli/main/install.sh -o /tmp/install.sh && chmod +x /tmp/install.sh && sudo /tmp/install.sh -v v0.1.0
 ```
 
-### Method 3: Manual Download
+### Method 2: Manual Download
 
-1. **Download the latest release:**
-   ```bash
-   # Replace VERSION with the latest version
-   wget https://github.com/sheenazien8/galaplate/releases/download/v1.0.0/galaplate-linux-amd64.tar.gz
-   ```
+Download the binary for your platform from the [releases page](https://github.com/galaplate/cli/releases).
 
-2. **Extract and install:**
-   ```bash
-   tar -xzf galaplate-linux-amd64.tar.gz
-   sudo mv galaplate /usr/local/bin/
-   chmod +x /usr/local/bin/galaplate
-   ```
+```bash
+# Example for Linux amd64
+wget https://github.com/galaplate/cli/releases/download/v0.1.0/galaplate-linux-amd64.tar.gz
+tar -xzf galaplate-linux-amd64.tar.gz
+sudo mv galaplate /usr/local/bin/
+chmod +x /usr/local/bin/galaplate
+```
 
-### Method 4: Build from Source
+### Method 3: Build from Source
 
 For developers who want the latest features:
 
 ```bash
-# Clone the repository
-git clone https://github.com/sheenazien8/galaplate.git
-cd galaplate
+# Clone the CLI repository
+git clone https://github.com/galaplate/cli.git
+cd cli
 
 # Build the CLI tool
-go build -o galaplate cmd/galaplate/main.go
+go build -o galaplate ./cmd/galaplate
 
 # Install to your PATH
 sudo mv galaplate /usr/local/bin/
@@ -88,16 +82,37 @@ sudo mv galaplate /usr/local/bin/
 
 ## Verify Installation
 
-Check that Galaplate is installed correctly:
+Check that Galaplate CLI is installed correctly:
 
 ```bash
-galaplate --version
+galaplate version
 ```
 
 You should see output similar to:
 ```
-Galaplate v1.0.0
+Galaplate CLI v0.1.0
 ```
+
+## Create Your First Project
+
+After installation, create your first Galaplate project:
+
+```bash
+# Create a basic API project
+galaplate new my-api-project
+
+# Create a full-stack project with MySQL
+galaplate new my-fullstack-app --template=full --db=mysql
+
+# Create a microservice
+galaplate new my-microservice --template=micro
+```
+
+This will generate a complete project structure with:
+- REST API endpoints
+- Database models and migrations
+- Console command system
+- Built-in code generators
 
 ## Development Dependencies
 
@@ -106,47 +121,43 @@ Install additional tools for the best development experience:
 ### Essential Tools
 
 ```bash
-# Install development dependencies using console commands
-go run main.go console db:create
-```
-
-This installs:
-- **reflex**: For hot reload during development
-- **dbmate**: For database migrations (now integrated via console commands)
-- **dotenv-cli**: For environment variable management
-
-### Manual Installation
-
-If you prefer to install tools manually:
-
-```bash
-# Hot reload tool
+# Hot reload tool for development
 go install github.com/cespare/reflex@latest
-
-# Database migration tool (optional - console commands available)
-go install github.com/amacneil/dbmate@latest
 
 # Environment CLI (requires Node.js)
 npm install -g dotenv-cli
 ```
 
-### Console Command System
+### Built-in Project Features
 
-Galaplate now includes a powerful console command system. After installation, you can:
+Each generated Galaplate project includes:
+
+- **Database Integration**: PostgreSQL and MySQL support with migrations
+- **Code Generators**: Built-in console commands for models, controllers, jobs, DTOs
+- **Hot Reload**: Development server with automatic restart
+- **Environment Management**: `.env` file support
+
+### Using Console Commands
+
+After creating a project, navigate to it and use the built-in console system:
 
 ```bash
+cd my-api-project
+
 # View all available console commands
 go run main.go console list
 
-# Generate new models, DTOs, jobs, etc.
-go run main.go console make:model User
-go run main.go console make:dto UserDto
-go run main.go console make:job ProcessEmail
-
 # Database operations
-go run main.go console db:up
-go run main.go console db:status
-go run main.go console db:fresh
+go run main.go console db:up          # Run migrations
+go run main.go console db:down        # Rollback migrations
+go run main.go console db:status      # Check migration status
+go run main.go console db:fresh       # Reset and run all migrations
+
+# Code generation
+go run main.go console make:model User
+go run main.go console make:controller UserController
+go run main.go console make:job EmailNotification
+go run main.go console make:dto UserCreateRequest
 ```
 
 ## Database Setup
@@ -391,16 +402,19 @@ go clean -cache
 
 After successful installation:
 
-1. **[Quick Start](/quick-start)** - Create your first project
-2. **[Configuration](/configuration)** - Set up your environment
-3. **[Project Structure](/project-structure)** - Understand the codebase
+1. **Create Your Project**: Use `galaplate new my-project` to generate your first application
+2. **[Quick Start](/quick-start)** - Learn about running and developing your project
+3. **[Configuration](/configuration)** - Configure your database and environment
+4. **[Project Structure](/project-structure)** - Understand the generated codebase
+5. **[Console Commands](/console-commands)** - Explore the built-in code generators
 
 ## Getting Help
 
 If you encounter issues during installation:
 
-- **[GitHub Issues](https://github.com/sheenazien8/galaplate/issues)** - Report bugs
-- **[Discussions](https://github.com/sheenazien8/galaplate/discussions)** - Ask questions
+- **[CLI Repository](https://github.com/galaplate/cli)** - Galaplate CLI on GitHub
+- **[Issues](https://github.com/galaplate/cli/issues)** - Report bugs and request features
+- **[Releases](https://github.com/galaplate/cli/releases)** - Download specific versions
 - **[Documentation](/)** - Browse the full documentation
 
 ---

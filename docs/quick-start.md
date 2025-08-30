@@ -13,54 +13,56 @@ Before you begin, make sure you have:
 
 ## Installation Methods
 
-### Method 1: Using the Install Script (Recommended)
+### Method 1: Using Galaplate CLI (Recommended)
 
-The fastest way to get started:
+The fastest way to get started with the new CLI approach:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/sheenazien8/galaplate/master/install.sh | bash
+# Install the Galaplate CLI
+curl -s https://raw.githubusercontent.com/galaplate/cli/main/install.sh -o /tmp/install.sh && chmod +x /tmp/install.sh && sudo /tmp/install.sh
+
+# Create your first project
+galaplate new my-awesome-api
+cd my-awesome-api
 ```
 
 ### Method 2: Manual Installation
 
 ```bash
-# Install the CLI tool
-go install github.com/sheenazien8/galaplate/cmd/galaplate@latest
+# Download and install CLI manually
+wget https://github.com/galaplate/cli/releases/download/v0.1.0/galaplate-linux-amd64.tar.gz
+tar -xzf galaplate-linux-amd64.tar.gz
+sudo mv galaplate /usr/local/bin/
 
-# Or clone the repository directly
-git clone https://github.com/sheenazien8/galaplate.git
-cd galaplate
+# Create your project
+galaplate new my-awesome-api
+cd my-awesome-api
 ```
 
 ## Create Your First Project
 
-### Using Galaplate CLI
+The Galaplate CLI will generate a complete project structure for you:
 
 ```bash
-# Create a new project
-galaplate my-awesome-api
+# Create a new API project (default template)
+galaplate new my-awesome-api
+
+# Or create with specific options
+galaplate new my-fullstack-app --template=full --db=postgres
+
+# Navigate to your project
 cd my-awesome-api
 
-# Install dependencies
+# Install dependencies (automatically done by CLI)
 go mod tidy
 ```
 
-### Using Git Clone
-
-```bash
-# Clone the repository
-git clone https://github.com/sheenazien8/galaplate.git my-awesome-api
-cd my-awesome-api
-
-# Remove git history and initialize your own
-rm -rf .git
-git init
-git add .
-git commit -m "Initial commit"
-
-# Install dependencies
-go mod tidy
-```
+The CLI generates:
+- Complete project structure with all necessary files
+- Database models and migrations
+- Console command system
+- Environment configuration
+- Hot reload setup
 
 ## Environment Configuration
 
@@ -123,14 +125,14 @@ CREATE DATABASE my_awesome_api;
 # View all available console commands
 go run main.go console list
 
-# Create database (if needed)
-go run main.go console db:create
-
 # Run database migrations
 go run main.go console db:up
 
 # Check migration status
 go run main.go console db:status
+
+# Seed the database (optional)
+go run main.go console db:seed
 ```
 
 ## Start Development Server
@@ -293,6 +295,7 @@ go run main.go console make:model User      # Generate new model
 go run main.go console make:dto UserDto     # Generate new DTO
 go run main.go console make:job ProcessData # Generate background job
 go run main.go console make:seeder UserSeeder # Generate database seeder
+go run main.go console make:controller UserController # Generate controller
 
 # Console System
 go run main.go console list         # List all available commands
@@ -305,7 +308,8 @@ go run main.go console interactive  # Interactive demo
 - **[Full Documentation](/)**
 - **[API Reference](/api-reference)**
 - **[Examples](/examples)**
-- **[GitHub Issues](https://github.com/sheenazien8/galaplate/issues)**
+- **[CLI Repository](https://github.com/galaplate/cli)**
+- **[GitHub Issues](https://github.com/galaplate/cli/issues)**
 
 ---
 

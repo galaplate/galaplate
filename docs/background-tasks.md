@@ -55,7 +55,7 @@ package jobs
 import (
     "encoding/json"
     "time"
-    "github.com/sheenazien8/galaplate/pkg/queue"
+    "github.com/galaplate/galaplate/pkg/queue"
 )
 
 type EmailJob struct{}
@@ -147,7 +147,7 @@ import (
     "encoding/json"
     "fmt"
     "time"
-    "github.com/sheenazien8/galaplate/logs"
+    "github.com/galaplate/galaplate/logs"
 )
 
 type ImageProcessorJob struct{}
@@ -245,8 +245,8 @@ package controllers
 
 import (
     "github.com/gofiber/fiber/v2"
-    "github.com/sheenazien8/galaplate/pkg/queue"
-    "github.com/sheenazien8/galaplate/pkg/queue/jobs"
+    "github.com/galaplate/galaplate/pkg/queue"
+    "github.com/galaplate/galaplate/pkg/queue/jobs"
 )
 
 func (c *UserController) SendWelcomeEmail(ctx *fiber.Ctx) error {
@@ -466,6 +466,6 @@ go run main.go console db:seed               # Run database seeders
 ## Next Steps
 
 - **[Console Commands](/console-commands)** - Master the command-line tools
-- **[Task Scheduler](/task-scheduler)** - Learn about CRON-based scheduling  
 - **[Database](/database)** - Understand job storage and models
-- **[Examples](/examples/jobs)** - See complete job examples
+- **[API Reference](/api-reference)** - Build APIs that dispatch background jobs
+- **[Project Structure](/project-structure)** - Understand where jobs are organized

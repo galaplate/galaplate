@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galaplate/core/config"
+	config "github.com/galaplate/core/env"
 	"github.com/galaplate/core/logger"
 	"github.com/gofiber/fiber/v2"
 )

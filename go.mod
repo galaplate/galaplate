@@ -3,7 +3,7 @@ module github.com/galaplate/galaplate
 go 1.22.1
 
 require (
-	github.com/galaplate/core v0.0.0-20250829163216-adcb32a116e2
+	github.com/galaplate/core v0.0.1
 	github.com/gofiber/fiber/v2 v2.52.5
 )
 

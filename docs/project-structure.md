@@ -7,40 +7,42 @@ Galaplate follows Go best practices and conventions for project organization. Th
 ```
 galaplate/
 ├── db/                     # Database related files
-│   ├── migrations/        # SQL migration files
-│   ├── seeders/          # Database seeders
-│   └── connect.go        # Database connection setup
+│   └── migrations/        # SQL migration files
+│       └── 20250830031846_create_users_table.sql
 ├── docs/                  # Documentation (Docsify)
 │   ├── index.html        # Docsify configuration
 │   ├── README.md         # Main documentation
-│   └── ...              # Other documentation files
-├── env/                   # Environment configuration
-│   └── config.go         # Environment variable utilities
-├── logs/                  # Logging utilities
-│   └── logger.go         # Logging configuration
+│   ├── _sidebar.md       # Navigation sidebar
+│   ├── _navbar.md        # Top navigation
+│   ├── _coverpage.md     # Cover page
+│   └── ...               # Other documentation files
+├── internal/              # Internal packages
+│   └── stubs/           # Code generation templates
+│       └── migrations/  # Migration stubs for different DB types
 ├── middleware/            # HTTP middleware
 │   └── auth.go           # Authentication middleware
 ├── pkg/                   # Main application packages
-│   ├── controllers/      # HTTP request handlers
-│   ├── models/          # Database models
-│   ├── queue/           # Background job queue
-│   ├── scheduler/       # CRON job scheduler
-│   ├── console/       # console commands
-│   └── utils/           # Utility functions
+│   └── controllers/      # HTTP request handlers
+│       └── log_controller.go
+│   └── jobs/        # Jobs path
+│       └── sendemail.go
+│   └── models/        # Models path
+│       └── user.go
+│   └── scheuduler/        # Scheduler path
+│       └── dailycleanup.go
 ├── router/                # Route definitions
-│   └── router.go        # HTTP routes setup
-├── internal/              # Internal folder
-│   ├── stubs/           # Code generation templates
-├── storage/              # Application storage
-│   └── logs/            # Log files
-├── templates/                # HTML templates
-│   └── logs.html        # Log viewer template
+│   └── router.go         # HTTP routes setup
+├── templates/             # HTML templates
+│   └── logs.html         # Log viewer template
+├── .env                   # Environment variables (local)
 ├── .env.example          # Environment variables template
 ├── .gitignore           # Git ignore rules
 ├── go.mod               # Go module definition
 ├── go.sum               # Go module checksums
 ├── main.go              # Application entry point
 ├── Makefile             # Development commands
+├── galaplate            # Compiled binary
+├── server               # Alternative binary name
 └── README.md            # Project documentation
 ```
 
@@ -52,17 +54,13 @@ All database-related functionality.
 
 ```
 db/
-├── migrations/           # SQL migration files
-│   └── 20250609004425_create_jobs_table.sql
-├── seeders/             # Database seeders
-│   └── main.go
-└── connect.go           # Database connection
+└── migrations/           # SQL migration files
+    └── 20250830031846_create_users_table.sql
 ```
 
 **Key Files:**
-- `connect.go` - Database connection setup and configuration
 - `migrations/` - SQL files for database schema changes
-- `seeders/` - Go files for populating test data
+- Database connection is handled through console commands
 
 **Example Migration:**
 ```sql
@@ -76,58 +74,36 @@ CREATE TABLE jobs (
 );
 ```
 
-### `/env` - Environment Configuration
+### `/internal/stubs` - Code Generation Templates
 
-Environment variable management and configuration utilities.
+Templates used by the console command system for code generation.
 
 ```
-env/
-└── config.go            # Environment utilities
+internal/stubs/
+└── migrations/          # Migration templates
+    ├── *.mysql.sql.stub    # MySQL migration templates
+    └── *.pgsql.sql.stub    # PostgreSQL migration templates
 ```
 
 **Purpose:**
-- Load environment variables from `.env` file
-- Provide type-safe access to configuration
-- Default value handling
+- Provide database-specific migration templates
+- Support for different database drivers
+- Consistent code generation across projects
 
-**Example:**
-```go
-// env/config.go
-func Get(key string) string {
-    return os.Getenv(key)
-}
+### `/middleware` - HTTP Middleware
 
-func GetInt(key string, defaultValue int) int {
-    // Implementation
-}
-```
-
-### `/logs` - Logging System
-
-Centralized logging configuration and utilities.
+Reusable HTTP middleware components.
 
 ```
-logs/
-└── logger.go            # Logging setup
+middleware/
+└── auth.go              # Authentication middleware
 ```
 
-**Features:**
-- Structured JSON logging
-- File rotation (daily)
-- Multiple log levels
-- Contextual logging
-
-**Example:**
-```go
-// logs/logger.go
-func Info(args ...interface{}) {
-    logger.Info(args...)
-}
-
-func Error(args ...interface{}) {
-    logger.Error(args...)
-}
-```
+**Purpose:**
+- HTTP request/response middleware
+- Authentication and authorization
+- CORS handling
+- Request logging
 
 ### `/middleware` - HTTP Middleware
 
@@ -163,20 +139,13 @@ Main application packages following Go conventions.
 
 ```
 pkg/
-├── controllers/         # HTTP request handlers
-│   └── log_controller.go
-├── models/             # Database models
-│   └── job.go
-├── queue/              # Background job system
-│   ├── jobs/          # Job implementations
-│   └── queue.go       # Queue management
-├── scheduler/          # CRON scheduler
-│   └── main.go
-└── utils/              # Utility functions
-    ├── bcrypt.go      # Password hashing
-    ├── pagination.go  # Pagination helpers
-    └── validator.go   # Request validation
+└── controllers/         # HTTP request handlers
+    └── log_controller.go
 ```
+
+**Current Structure:**
+- `controllers/` - HTTP request handlers (log controller for admin interface)
+- Additional packages are generated by the CLI as needed
 
 #### Controllers
 Handle HTTP requests and responses.
@@ -204,30 +173,24 @@ type Job struct {
 }
 ```
 
-#### Queue System
-Background job processing with worker pools.
+#### Controllers
+Handle HTTP requests and responses.
 
 ```go
-// pkg/queue/queue.go
-type Queue struct {
-    tasks chan Task
-    wg    sync.WaitGroup
-}
+// pkg/controllers/log_controller.go
+type LogController struct{}
 
-func (q *Queue) Start(workerCount int) {
-    // Start worker goroutines
+func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error {
+    // Handle log viewer request
 }
 ```
 
-#### Utilities
-Common helper functions and utilities.
-
-```go
-// pkg/utils/validator.go
-func ValidateStruct(s interface{}) error {
-    // Validation logic
-}
-```
+#### Additional Packages
+The CLI generates additional packages as needed:
+- `models/` - Database models (generated via `make:model`)
+- `dto/` - Data Transfer Objects (generated via `make:dto`)
+- `queue/` - Background job system (generated via `make:job`)
+- `utils/` - Utility functions (generated as needed)
 
 ### `/router` - Route Definitions
 
@@ -258,55 +221,33 @@ func SetupRouter(app *fiber.App) {
 }
 ```
 
-### `/scripts` - Development Scripts
-
-Helper scripts for development and deployment.
-
-```
-scripts/
-├── seeder/              # Database seeding
-├── stubs/              # Code generation templates
-├── tinker/             # Interactive shell
-├── generate_model.sh   # Model generation
-├── generate_dto.sh     # DTO generation
-├── migrate.sh          # Database migrations
-└── ...                 # Other utility scripts
-```
-
-**Key Scripts:**
-- `migrate.sh` - Database migration management
-- `generate_model.sh` - Generate new models
-- `generate_dto.sh` - Generate DTOs
-- `generate_job.sh` - Generate background jobs
-
-### `/storage` - Application Storage
-
-Runtime storage for logs, uploads, and temporary files.
-
-```
-storage/
-└── logs/               # Application log files
-    └── app.2025-06-24.log
-```
-
-**Purpose:**
-- Store application logs
-- Temporary file storage
-- Upload storage (when implemented)
-
-### `/views` - HTML Templates
+### `/templates` - HTML Templates
 
 HTML templates for web interfaces.
 
 ```
-views/
+templates/
 └── logs.html           # Log viewer template
 ```
 
 **Purpose:**
 - Admin interfaces
-- Email templates
 - Web dashboards
+- Email templates (when implemented)
+
+### `/templates` - HTML Templates
+
+HTML templates for web interfaces.
+
+```
+templates/
+└── logs.html           # Log viewer template
+```
+
+**Purpose:**
+- Admin interfaces
+- Web dashboards
+- Email templates (when implemented)
 
 ## Configuration Files
 
@@ -484,6 +425,13 @@ func NewUserController(service UserService) *UserController {
 1. Implement job in `/pkg/queue/jobs/`
 2. Register job in queue system
 3. Dispatch jobs from controllers
+
+## Next Steps
+
+- **[Console Commands](/console-commands)** - Learn about the powerful code generation tools
+- **[Database](/database)** - Understand database operations and migrations
+- **[Configuration](/configuration)** - Configure your environment and database
+- **[API Reference](/api-reference)** - Explore available endpoints
 
 ---
 

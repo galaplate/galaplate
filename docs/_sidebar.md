@@ -9,6 +9,7 @@
   - [Console Commands](/console-commands)
   - [Database](/database)
   - [Routing](/routings)
+  - [Policies & Security](/policies)
   - [DTOs & Validation](/validation-and-dto)
   - [Background Tasks](/background-tasks)
 

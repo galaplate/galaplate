@@ -699,7 +699,7 @@ var users []models.User
 db.Preload("Profile").Find(&users)
 
 // Pagination example
-result := db.Scopes(utils.Paginate(page, pageSize)).Find(&users)
+result := db.Scopes(supports.Paginate(page, pageSize)).Find(&users)
 ```
 
 ### Database Debugging

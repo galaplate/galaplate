@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	config "github.com/galaplate/core/env"
+	"github.com/galaplate/core/env"
 	"github.com/galaplate/core/logger"
 	"github.com/gofiber/fiber/v2"
 )
@@ -70,7 +70,7 @@ func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error {
 		selectedContent = string(content)
 	}
 
-	appName := config.Get("APP_NAME")
+	appName := env.Get("APP_NAME")
 
 	return ctx.Render("logs", fiber.Map{
 		"Title":           fmt.Sprintf("%s - Logs Viewer", appName),

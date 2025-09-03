@@ -190,7 +190,7 @@ The CLI generates additional packages as needed:
 - `models/` - Database models (generated via `make:model`)
 - `dto/` - Data Transfer Objects (generated via `make:dto`)
 - `queue/` - Background job system (generated via `make:job`)
-- `utils/` - Utility functions (generated as needed)
+- `supports/` - Support utility functions (generated as needed)
 
 ### `/router` - Route Definitions
 

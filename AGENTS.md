@@ -51,7 +51,7 @@ Galaplate features a powerful console command system for development tasks:
 
 ## 4. Project Structure
 - App code is under `cmd/`, `pkg/`, `domains/`, `router/`
-- DB/migrations/seed in `db/`, utility code in `pkg/utils/`
+- DB/migrations/seed in `db/`, support utility code in `pkg/supports/`
 - Console commands in `pkg/console/commands/`
 
 ## 5. Custom Command Development

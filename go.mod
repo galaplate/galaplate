@@ -3,8 +3,9 @@ module github.com/galaplate/galaplate
 go 1.22.1
 
 require (
-	github.com/galaplate/core v0.0.1
+	github.com/galaplate/core v0.0.6
 	github.com/gofiber/fiber/v2 v2.52.5
+	gorm.io/gorm v1.25.11
 )
 
 require (
@@ -46,5 +47,4 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
 	gorm.io/driver/postgres v1.5.9 // indirect
-	gorm.io/gorm v1.25.11 // indirect
 )

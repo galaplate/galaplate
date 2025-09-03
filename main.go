@@ -8,7 +8,6 @@ import (
 	"github.com/galaplate/core/env"
 	"github.com/galaplate/core/logger"
 	pkgConsole "github.com/galaplate/galaplate/console"
-	_ "github.com/galaplate/galaplate/pkg/policies"
 	"github.com/galaplate/galaplate/router"
 )
 

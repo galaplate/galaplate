@@ -29,7 +29,7 @@ func (tc *TestCase) SetupTest() {
 
 	// Set environment for testing the default is using .env file
 	os.Setenv("APP_ENV", "testing")
-    // os.Setenv("DB_DATABASE", "galaplate")
+	// os.Setenv("DB_DATABASE", "galaplate")
 
 	// Use bootstrap to create a properly configured app for testing
 	cfg := bootstrap.DefaultConfig()

@@ -6,7 +6,7 @@ import (
 )
 
 func RegisterCommands(kernel *console.Kernel) {
-    // Register your custom console commands here
-    // Example:
-    // kernel.Register(&commands.SendwelcomeemailcommandCommand{})
+	// Register your custom console commands here
+	// Example:
+	// kernel.Register(&commands.SendwelcomeemailcommandCommand{})
 }

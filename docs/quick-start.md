@@ -78,7 +78,7 @@ The CLI generates:
    APP_DEBUG=true
    APP_URL=http://localhost
    APP_PORT=8080
-   APP_SCREET=your-super-secret-key-here
+   APP_SECRET=your-super-secret-key-here
 
    # Database Configuration
    DB_CONNECTION=mysql
@@ -199,19 +199,18 @@ Congratulations! 🎉 Your Galaplate application is now running. Here's what you
 - **[Configuration](/configuration)** - Learn about all configuration options
 
 ### 2. Build Your API
-- **[Models & DTOs](/models-dtos)** - Create data models
-- **[Controllers](/controllers)** - Build API endpoints
-- **[Database](/database)** - Work with databases
+- **[DTOs & Validation](/validation-and-dto)** - Create data models and validation
+- **[Database](/database)** - Work with databases and migrations
+- **[Routing](/routings)** - Define API endpoints and routes
 
 ### 3. Add Features
-- **[Authentication](/authentication)** - Implement user authentication
+- **[Policies & Security](/policies)** - Implement authentication and security
 - **[Background Tasks](/background-tasks)** - Process tasks asynchronously
-- **[Validation](/validation)** - Validate incoming requests
+- **[Console Commands](/console-commands)** - Generate boilerplate code
 
 ### 4. Development Tools
-- **[Code Generation](/code-generation)** - Generate boilerplate code
 - **[Testing](/testing)** - Write and run tests
-- **[Migrations](/migrations)** - Manage database schema
+- **[API Reference](/api-reference)** - Explore available endpoints
 
 ## Common Issues
 
@@ -279,16 +278,9 @@ go run main.go console db:status    # Check migration status
 go run main.go console db:fresh     # Reset and migrate
 go run main.go console db:seed      # Run database seeders
 
-# Database (Make Commands - Alternative)
-make db-up            # Run migrations
-make db-down          # Rollback migration
-make db-status        # Check migration status
-make db-fresh         # Reset and migrate
-
 # Code Quality
 make fmt              # Format code
 make test             # Run tests
-make test-coverage    # Run tests with coverage
 
 # Code Generation (Console Commands)
 go run main.go console make:model User      # Generate new model

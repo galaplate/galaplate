@@ -263,7 +263,7 @@ The main application file that:
 ```go
 func main() {
     // Load environment
-    screet := env.Get("APP_SCREET")
+    screet := env.Get("APP_SECRET")
 
     // Create Fiber app
     app := fiber.New(fiber.Config{
@@ -319,7 +319,7 @@ APP_NAME=Galaplate
 APP_ENV=local
 APP_DEBUG=true
 APP_PORT=8080
-APP_SCREET=your-secret-key
+APP_SECRET=your-secret-key
 
 DB_CONNECTION=mysql
 DB_HOST=localhost

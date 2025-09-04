@@ -186,6 +186,9 @@ go run main.go console make:dto UserResponseDto
 go run main.go console make:dto ApiResponseDto
 ```
 
----
+## Next Steps
 
-**Next:** See [Console Commands](/console-commands) for more generation tools, or [API Reference](/api-reference) for endpoint details.
+- **[Console Commands](/console-commands)** - Learn about all available generation commands
+- **[Testing](/testing)** - Write tests for your DTOs and validation logic
+- **[API Reference](/api-reference)** - Build endpoints using your DTOs
+- **[Database](/database)** - Create models that work with your DTOs

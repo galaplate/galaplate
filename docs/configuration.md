@@ -15,7 +15,7 @@ All configuration is managed through environment variables defined in your `.env
 | `APP_DEBUG` | boolean | `true` | Enable debug mode and verbose logging |
 | `APP_URL` | string | `http://localhost` | Base URL for the application |
 | `APP_PORT` | string | `8080` | Port number for the HTTP server |
-| `APP_SCREET` | string | **required** | Secret key for JWT and encryption |
+| `APP_SECRET` | string | **required** | Secret key for JWT and encryption |
 
 ### Database Configuration
 
@@ -53,7 +53,7 @@ APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost
 APP_PORT=8080
-APP_SCREET=super-secret-key-change-this-in-production
+APP_SECRET=super-secret-key-change-this-in-production
 
 # Database
 DB_CONNECTION=mysql

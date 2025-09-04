@@ -34,7 +34,7 @@ fmt:
 # Run tests
 test:
 	@echo "🧪 Running tests..."
-	go test ./...
+	go test ./tests/...
 
 # Run tests with coverage
 test-coverage:
@@ -42,6 +42,7 @@ test-coverage:
 	go test -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
 
+# Run tests in the tests directory only
 # Install development dependencies
 install-deps:
 	@echo "📦 Installing development dependencies..."
@@ -65,7 +66,6 @@ help:
 	@echo "  clean                       Clean build artifacts"
 	@echo "  fmt                         Format Go code"
 	@echo "  test                        Run tests"
-	@echo "  test-coverage               Run tests with coverage report"
 	@echo "  install-deps                Install development dependencies"
 	@echo "  tidy                        Tidy go modules"
 	@echo ""

@@ -12,6 +12,7 @@
   - [Policies & Security](/policies)
   - [DTOs & Validation](/validation-and-dto)
   - [Background Tasks](/background-tasks)
+  - [Testing](/testing)
 
 - **API Reference**
   - [Endpoints](/api-reference)

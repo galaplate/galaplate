@@ -15,6 +15,15 @@ func SetupRouter(app *fiber.App) {
 		return c.SendString("Hello world")
 	})
 
+	// Example routes with different policy combinations
+	api := app.Group("/api")
+
 	var logController = controllers.LogControllerInstance
 	app.Get("/logs", middleware.BasicAuth(), logController.ShowLogsPage)
+
+	// Test routes for testing framework
+	var testController = controllers.TestControllerInstance
+	api.Get("/health", testController.GetHealthCheck)
+	api.Post("/test", testController.CreateTestData)
+	api.Get("/test/:id", testController.GetTestData)
 }

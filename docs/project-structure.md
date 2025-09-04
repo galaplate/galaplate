@@ -263,7 +263,7 @@ The main application file that:
 ```go
 func main() {
     // Load environment
-    screet := env.Get("APP_SECRET")
+    secret := env.Get("APP_SECRET")
 
     // Create Fiber app
     app := fiber.New(fiber.Config{

@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>console: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/galaplate/galaplate/console/kernel.go (0.0%)</option>
+				
+				<option value="file1">github.com/galaplate/galaplate/main.go (0.0%)</option>
+				
+				<option value="file2">github.com/galaplate/galaplate/middleware/auth.go (0.0%)</option>
+				
+				<option value="file3">github.com/galaplate/galaplate/pkg/controllers/log_controller.go (0.0%)</option>
+				
+				<option value="file4">github.com/galaplate/galaplate/pkg/controllers/test_controller.go (0.0%)</option>
+				
+				<option value="file5">github.com/galaplate/galaplate/router/router.go (0.0%)</option>
+				
+				<option value="file6">github.com/galaplate/galaplate/tests/test_case.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package console
+
+import (
+        "github.com/galaplate/core/console"
+        // "github.com/galaplate/galaplate/console/commands"
+)
+
+func RegisterCommands(kernel *console.Kernel) {<span class="cov0" title="0">
+        // Register your custom console commands here
+        // Example:
+        // kernel.Register(&amp;commands.SendwelcomeemailcommandCommand{})
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "os"
+
+        "github.com/galaplate/core/bootstrap"
+        "github.com/galaplate/core/console"
+        "github.com/galaplate/core/env"
+        "github.com/galaplate/core/logger"
+        pkgConsole "github.com/galaplate/galaplate/console"
+        "github.com/galaplate/galaplate/router"
+)
+
+func main() <span class="cov0" title="0">{
+        if len(os.Args) &gt; 1 &amp;&amp; os.Args[1] == "console" </span><span class="cov0" title="0">{
+                bootstrap.Init()
+                kernel := console.NewKernel()
+                pkgConsole.RegisterCommands(kernel)
+
+                if err := kernel.Run(os.Args); err != nil </span><span class="cov0" title="0">{
+                        logger.Fatal("Console command failed: ", err.Error())
+                }</span>
+                <span class="cov0" title="0">return</span>
+        }
+
+        <span class="cov0" title="0">cfg := bootstrap.DefaultConfig()
+        cfg.SetupRoutes = router.SetupRouter
+        // Optional: Customize GORM configuration
+        // cfg.DatabaseConfig = &amp;bootstrap.DatabaseConfig{
+        //     GormConfig: &amp;bootstrap.GormConfig{
+        //         Config: gorm.Config{
+        //             PrepareStmt: true,
+        //             DisableForeignKeyConstraintWhenMigrating: true,
+        //         },
+        //     },
+        // }
+
+        app := bootstrap.App(cfg)
+        port := env.Get("APP_PORT")
+        if port == "" </span><span class="cov0" title="0">{
+                port = "8080"
+        }</span>
+
+        <span class="cov0" title="0">if err := app.Listen(":" + port); err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Server won't run: ", err.Error())
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package middleware
+
+import (
+        "crypto/subtle"
+        "encoding/base64"
+        "strings"
+
+        config "github.com/galaplate/core/env"
+        "github.com/galaplate/core/logger"
+        "github.com/gofiber/fiber/v2"
+)
+
+type AuthMiddleware struct {
+}
+
+func (m *AuthMiddleware) BasicAuth() fiber.Handler <span class="cov0" title="0">{
+        return func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                var auth = c.Get("Authorization")
+                if auth == "" </span><span class="cov0" title="0">{
+                        c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
+                        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+                                "success": false,
+                                "message": "Unauthorized",
+                        })
+                }</span>
+
+                <span class="cov0" title="0">if !strings.HasPrefix(auth, "Basic ") </span><span class="cov0" title="0">{
+                        c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
+                        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+                                "success": false,
+                                "message": "Invalid authorization header",
+                        })
+                }</span>
+
+                <span class="cov0" title="0">payload, err := base64.StdEncoding.DecodeString(auth[6:])
+                if err != nil </span><span class="cov0" title="0">{
+                        logger.Error("Failed to decode base64 auth:", err)
+                        c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
+                        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+                                "success": false,
+                                "message": "Invalid base64 encoding",
+                        })
+                }</span>
+
+                <span class="cov0" title="0">var pair = strings.SplitN(string(payload), ":", 2)
+                if len(pair) != 2 </span><span class="cov0" title="0">{
+                        c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
+                        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+                                "success": false,
+                                "message": "Invalid credentials format",
+                        })
+                }</span>
+
+                <span class="cov0" title="0">var username = pair[0]
+                var password = pair[1]
+
+                var expectedUsername = config.Get("BASIC_AUTH_USERNAME")
+                var expectedPassword = config.Get("BASIC_AUTH_PASSWORD")
+
+                if expectedUsername == "" || expectedPassword == "" </span><span class="cov0" title="0">{
+                        logger.Error("Basic auth credentials not configured")
+                        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+                                "success": false,
+                                "message": "Authentication not configured",
+                        })
+                }</span>
+
+                <span class="cov0" title="0">if subtle.ConstantTimeCompare([]byte(username), []byte(expectedUsername)) != 1 ||
+                        subtle.ConstantTimeCompare([]byte(password), []byte(expectedPassword)) != 1 </span><span class="cov0" title="0">{
+                        logger.Warn("Failed basic auth attempt for username:", username)
+                        c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
+                        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+                                "success": false,
+                                "message": "Invalid credentials",
+                        })
+                }</span>
+
+                <span class="cov0" title="0">return c.Next()</span>
+        }
+}
+
+var AuthMiddlewareInstance = &amp;AuthMiddleware{}
+
+func BasicAuth() fiber.Handler <span class="cov0" title="0">{
+        return AuthMiddlewareInstance.BasicAuth()
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package controllers
+
+import (
+        "fmt"
+        "io/ioutil"
+        "os"
+        "path/filepath"
+        "sort"
+        "strings"
+        "time"
+
+        "github.com/galaplate/core/env"
+        "github.com/galaplate/core/logger"
+        "github.com/gofiber/fiber/v2"
+)
+
+type LogFile struct {
+        Name         string    `json:"name"`
+        Size         int64     `json:"size"`
+        ModifiedTime time.Time `json:"modified_time"`
+        Content      string    `json:"content,omitempty"`
+}
+
+type LogController struct {
+}
+
+func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+        var logsDir = "./storage/logs"
+        var selectedFile = ctx.Query("file")
+        var selectedContent = ""
+
+        files, err := ioutil.ReadDir(logsDir)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Unable to read logs directory:", err)
+                return ctx.Status(fiber.StatusInternalServerError).SendString("Unable to read logs directory")
+        }</span>
+
+        <span class="cov0" title="0">var logFiles []LogFile
+        for _, file := range files </span><span class="cov0" title="0">{
+                if !file.IsDir() &amp;&amp; strings.HasSuffix(file.Name(), ".log") </span><span class="cov0" title="0">{
+                        logFiles = append(logFiles, LogFile{
+                                Name:         file.Name(),
+                                Size:         file.Size(),
+                                ModifiedTime: file.ModTime(),
+                        })
+                }</span>
+        }
+
+        <span class="cov0" title="0">sort.Slice(logFiles, func(i, j int) bool </span><span class="cov0" title="0">{
+                return logFiles[i].ModifiedTime.After(logFiles[j].ModifiedTime)
+        }</span>)
+
+        <span class="cov0" title="0">if selectedFile != "" </span><span class="cov0" title="0">{
+                if !strings.HasSuffix(selectedFile, ".log") </span><span class="cov0" title="0">{
+                        return ctx.Status(fiber.StatusBadRequest).SendString("Invalid file type")
+                }</span>
+
+                <span class="cov0" title="0">var logPath = filepath.Join(logsDir, selectedFile)
+
+                if _, err := os.Stat(logPath); os.IsNotExist(err) </span><span class="cov0" title="0">{
+                        return ctx.Status(fiber.StatusNotFound).SendString("Log file not found")
+                }</span>
+
+                <span class="cov0" title="0">content, err := ioutil.ReadFile(logPath)
+                if err != nil </span><span class="cov0" title="0">{
+                        logger.Error("Unable to read log file:", err)
+                        return ctx.Status(fiber.StatusInternalServerError).SendString("Unable to read log file")
+                }</span>
+
+                <span class="cov0" title="0">selectedContent = string(content)</span>
+        }
+
+        <span class="cov0" title="0">appName := env.Get("APP_NAME")
+
+        return ctx.Render("logs", fiber.Map{
+                "Title":           fmt.Sprintf("%s - Logs Viewer", appName),
+                "LogFiles":        logFiles,
+                "SelectedFile":    selectedFile,
+                "SelectedContent": selectedContent,
+        })</span>
+}
+
+var LogControllerInstance = &amp;LogController{}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package controllers
+
+import (
+        "github.com/galaplate/core/supports"
+        "github.com/gofiber/fiber/v2"
+)
+
+type TestController struct{}
+
+type CreateTestRequest struct {
+        Name        string `json:"name" validate:"required"`
+        Description string `json:"description"`
+}
+
+func (s *CreateTestRequest) Validate(c *fiber.Ctx) (u *CreateTestRequest, err error) <span class="cov0" title="0">{
+        myValidator := &amp;supports.XValidator{}
+        if err := c.BodyParser(s); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">if err := myValidator.Validate(s); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return s, nil</span>
+
+}
+
+func NewTestController() *TestController <span class="cov0" title="0">{
+        return &amp;TestController{}
+}</span>
+
+func (tc *TestController) GetHealthCheck(c *fiber.Ctx) error <span class="cov0" title="0">{
+        return c.JSON(fiber.Map{
+                "status":  "ok",
+                "message": "API is working",
+        })
+}</span>
+
+func (tc *TestController) CreateTestData(c *fiber.Ctx) error <span class="cov0" title="0">{
+        req, err := new(CreateTestRequest).Validate(c)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+                "success": true,
+                "message": "Test data created successfully",
+                "data": fiber.Map{
+                        "id":          1,
+                        "name":        req.Name,
+                        "description": req.Description,
+                },
+        })</span>
+}
+
+func (tc *TestController) GetTestData(c *fiber.Ctx) error <span class="cov0" title="0">{
+        id := c.Params("id")
+
+        return c.JSON(fiber.Map{
+                "success": true,
+                "data": fiber.Map{
+                        "id":          id,
+                        "name":        "Test Item",
+                        "description": "This is a test item",
+                },
+        })
+}</span>
+
+var TestControllerInstance = NewTestController()
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package router
+
+import (
+        "github.com/galaplate/galaplate/middleware"
+        "github.com/galaplate/galaplate/pkg/controllers"
+        "github.com/gofiber/fiber/v2"
+        "github.com/gofiber/fiber/v2/middleware/cors"
+)
+
+func SetupRouter(app *fiber.App) <span class="cov0" title="0">{
+
+        app.Use(cors.New())
+
+        app.Get("/", func(c *fiber.Ctx) error </span><span class="cov0" title="0">{
+                return c.SendString("Hello world")
+        }</span>)
+
+        // Example routes with different policy combinations
+        <span class="cov0" title="0">api := app.Group("/api")
+
+        var logController = controllers.LogControllerInstance
+        app.Get("/logs", middleware.BasicAuth(), logController.ShowLogsPage)
+
+        // Test routes for testing framework
+        var testController = controllers.TestControllerInstance
+        api.Get("/health", testController.GetHealthCheck)
+        api.Post("/test", testController.CreateTestData)
+        api.Get("/test/:id", testController.GetTestData)</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package tests
+
+import (
+        "os"
+        "path/filepath"
+        "runtime"
+
+        "github.com/galaplate/core/bootstrap"
+        "github.com/galaplate/galaplate/router"
+        "github.com/gofiber/fiber/v2"
+        "github.com/stretchr/testify/suite"
+        "gorm.io/gorm"
+)
+
+type TestCase struct {
+        suite.Suite
+        App *fiber.App
+        DB  *gorm.DB
+}
+
+func (tc *TestCase) SetupTest() <span class="cov0" title="0">{
+        // Always ensure we're in project root for the entire test setup
+        _, filename, _, _ := runtime.Caller(0)
+        projectRoot := filepath.Join(filepath.Dir(filename), "..")
+        absProjectRoot, _ := filepath.Abs(projectRoot)
+
+        // Change to project root and stay there for the test
+        os.Chdir(absProjectRoot)
+
+        // Set environment for testing the default is using .env file
+        os.Setenv("APP_ENV", "testing")
+        // os.Setenv("DB_DATABASE", "galaplate")
+
+        // Use bootstrap to create a properly configured app for testing
+        cfg := bootstrap.DefaultConfig()
+        cfg.SetupRoutes = router.SetupRouter
+        app := bootstrap.App(cfg)
+
+        tc.App = app
+
+        // Note: We intentionally don't restore the working directory
+        // This ensures storage and other paths are relative to project root
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

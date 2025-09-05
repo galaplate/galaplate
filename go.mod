@@ -8,7 +8,7 @@ require (
 	github.com/galaplate/core v0.0.9
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/stretchr/testify v1.11.1
-	gorm.io/gorm v1.25.11
+	gorm.io/gorm v1.30.0
 )
 
 require (

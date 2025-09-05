@@ -3,3 +3,5 @@ server
 logs/*.log
 storage/
 .opencode/
+coverage.out
+coverage.html

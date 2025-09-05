@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.24.4
 
 require (
-	github.com/galaplate/core v0.0.9
+	github.com/galaplate/core v0.0.10
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/stretchr/testify v1.11.1
 	gorm.io/gorm v1.30.0

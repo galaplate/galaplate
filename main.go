@@ -12,19 +12,9 @@ import (
 )
 
 func main() {
-	if len(os.Args) > 1 && os.Args[1] == "console" {
-		bootstrap.Init()
-		kernel := console.NewKernel()
-		pkgConsole.RegisterCommands(kernel)
-
-		if err := kernel.Run(os.Args); err != nil {
-			logger.Fatal("Console command failed: ", err.Error())
-		}
-		return
-	}
-
 	cfg := bootstrap.DefaultConfig()
 	cfg.SetupRoutes = router.SetupRouter
+	cfg.AppSecret = env.Get("APP_SECRET")
 	// Optional: Customize GORM configuration
 	// cfg.DatabaseConfig = &bootstrap.DatabaseConfig{
 	//     GormConfig: &bootstrap.GormConfig{
@@ -34,6 +24,16 @@ func main() {
 	//         },
 	//     },
 	// }
+	if len(os.Args) > 1 && os.Args[1] == "console" {
+		bootstrap.Init(cfg)
+		kernel := console.NewKernel()
+		pkgConsole.RegisterCommands(kernel)
+
+		if err := kernel.Run(os.Args); err != nil {
+			logger.Fatal("Console command failed: ", err.Error())
+		}
+		return
+	}
 
 	app := bootstrap.App(cfg)
 	port := env.Get("APP_PORT")

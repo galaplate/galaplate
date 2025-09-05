@@ -7,9 +7,8 @@ This guide provides essential dev context for automated agents working in this r
 - **Run**: `make run` (builds then runs)
 - **Dev (hot reload)**: `make dev` (needs reflex)
 - **Format**: `make fmt` or `go fmt ./...`
-- **Test all**: `make test` or `go test ./...`
+- **Test all**: `make test` or `go test ./tests/...`
 - **Test (single file)**: `go test ./path/to/pkg/file_test.go`
-- **Test Coverage**: `make test-coverage`
 - **Linting**: Uses `go fmt` (strict gofmt style); no golangci-lint config by default
 
 ## 2. Console Command System

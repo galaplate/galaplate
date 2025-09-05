@@ -13,11 +13,13 @@ import (
 )
 
 type TestControllerSuite struct {
-	tests.TestCase
+	tests.TestCase // Base test case without database refresh for now
+	// To enable database refresh, change to: tests.WithRefreshDatabase
 }
 
 func (t *TestControllerSuite) SetupTest() {
 	t.TestCase.SetupTest()
+	// For database refresh, uncomment: t.WithRefreshDatabase.SetupTest()
 }
 
 func (suite *TestControllerSuite) TestCanAccessHealtCheck() {

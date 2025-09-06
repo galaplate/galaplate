@@ -48,7 +48,7 @@ install-deps:
 	@echo "📦 Installing development dependencies..."
 	go install github.com/cespare/reflex@latest
 	go install github.com/amacneil/dbmate@latest
-	npm install -g dotenv-cli
+	npm install -g dotenv-cli --force || echo "dotenv-cli already installed or npm not available"
 
 # Tidy go modules
 tidy:

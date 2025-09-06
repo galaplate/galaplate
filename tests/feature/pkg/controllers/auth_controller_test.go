@@ -63,7 +63,7 @@ func (suite *AuthControllerSuite) TestRegisterValidationErrors() {
 
 	resp, err := suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(400, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode)
 
 	// Test invalid email
 	payload = strings.NewReader(`{"username": "testuser", "email": "invalid-email", "password": "password123"}`)
@@ -73,7 +73,7 @@ func (suite *AuthControllerSuite) TestRegisterValidationErrors() {
 
 	resp, err = suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(400, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode)
 
 	// Test short password
 	payload = strings.NewReader(`{"username": "testuser", "email": "test@example.com", "password": "123"}`)
@@ -83,7 +83,7 @@ func (suite *AuthControllerSuite) TestRegisterValidationErrors() {
 
 	resp, err = suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(400, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode)
 }
 
 func (suite *AuthControllerSuite) TestDuplicateEmailRegistration() {
@@ -264,7 +264,7 @@ func (suite *AuthControllerSuite) TestLoginValidationErrors() {
 
 	resp, err := suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(400, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode)
 
 	// Test invalid email format
 	payload = strings.NewReader(`{"email": "invalid-email", "password": "password123"}`)
@@ -274,7 +274,7 @@ func (suite *AuthControllerSuite) TestLoginValidationErrors() {
 
 	resp, err = suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(400, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode)
 
 	// Test short password
 	payload = strings.NewReader(`{"email": "test@example.com", "password": "123"}`)
@@ -284,7 +284,7 @@ func (suite *AuthControllerSuite) TestLoginValidationErrors() {
 
 	resp, err = suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(400, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode)
 }
 
 func TestAuthControllerSuiteRun(t *testing.T) {

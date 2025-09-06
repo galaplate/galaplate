@@ -13,12 +13,7 @@ type AuthRegisterRequest struct {
 }
 
 func (s *AuthRegisterRequest) Validate(c *fiber.Ctx) (u *AuthRegisterRequest, err error) {
-	myValidator := &supports.XValidator{}
-	if err := c.BodyParser(s); err != nil {
-		return nil, err
-	}
-
-	if err := myValidator.Validate(s); err != nil {
+	if err = supports.NewValidator(c).Validate(s); err != nil {
 		return nil, err
 	}
 

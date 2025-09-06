@@ -120,7 +120,7 @@ func (suite *TestControllerSuite) TestInvalidJSONPayload() {
 
 	resp, err := suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(500, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode)
 }
 
 func (suite *TestControllerSuite) TestMissingContentType() {

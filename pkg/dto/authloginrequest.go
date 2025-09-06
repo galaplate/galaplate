@@ -12,12 +12,7 @@ type AuthLoginRequest struct {
 }
 
 func (s *AuthLoginRequest) Validate(c *fiber.Ctx) (u *AuthLoginRequest, err error) {
-	myValidator := &supports.XValidator{}
-	if err := c.BodyParser(s); err != nil {
-		return nil, err
-	}
-
-	if err := myValidator.Validate(s); err != nil {
+	if err = supports.NewValidator(c).Validate(s); err != nil {
 		return nil, err
 	}
 

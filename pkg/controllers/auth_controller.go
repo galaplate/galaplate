@@ -26,11 +26,7 @@ func NewAuthController() *AuthController {
 func (ac *AuthController) Register(c *fiber.Ctx) error {
 	req, err := new(dto.AuthRegisterRequest).Validate(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Validation failed",
-			"error":   err.Error(),
-		})
+		return err
 	}
 
 	db := database.Connect
@@ -100,11 +96,7 @@ func (ac *AuthController) Register(c *fiber.Ctx) error {
 func (ac *AuthController) Login(c *fiber.Ctx) error {
 	req, err := new(dto.AuthLoginRequest).Validate(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Validation failed",
-			"error":   err.Error(),
-		})
+		return err
 	}
 
 	db := database.Connect

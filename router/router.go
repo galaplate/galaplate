@@ -1,8 +1,8 @@
 package router
 
 import (
-	"github.com/galaplate/galaplate/middleware"
 	"github.com/galaplate/galaplate/pkg/controllers"
+	"github.com/galaplate/galaplate/pkg/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
@@ -21,9 +21,24 @@ func SetupRouter(app *fiber.App) {
 	var logController = controllers.LogControllerInstance
 	app.Get("/logs", middleware.BasicAuth(), logController.ShowLogsPage)
 
+	// Auth routes
+	var authController = controllers.AuthControllerInstance
+	api.Post("/register", authController.Register)
+	api.Post("/login", authController.Login)
+
 	// Test routes for testing framework
 	var testController = controllers.TestControllerInstance
 	api.Get("/health", testController.GetHealthCheck)
 	api.Post("/test", testController.CreateTestData)
 	api.Get("/test/:id", testController.GetTestData)
+
+	// Protected routes (require JWT authentication)
+	api.Get("/profile", middleware.JWTAuth(), func(c *fiber.Ctx) error {
+		user := c.Locals("user")
+		return c.JSON(fiber.Map{
+			"success": true,
+			"message": "Profile data",
+			"data":    user,
+		})
+	})
 }

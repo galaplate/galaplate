@@ -11,7 +11,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:8.0
@@ -21,16 +21,16 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
-        
+
     - name: Cache Go modules
       uses: actions/cache@v3
       with:
@@ -38,13 +38,13 @@ jobs:
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
-          
+
     - name: Download dependencies
       run: go mod download
-      
+
     - name: Setup environment file
-      run: cp .env.test .env
-      
+      run: cp .env.testing .env
+
     - name: Format check
       run: |
         go fmt ./...
@@ -52,21 +52,21 @@ jobs:
           echo "Code is not formatted. Please run 'make fmt'"
           exit 1
         fi
-        
+
     - name: Build application
       run: make build
-      
+
     - name: Run tests
       run: make test
 
   release:
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-        
+
     - name: Generate changelog
       id: changelog
       run: |
@@ -76,7 +76,7 @@ jobs:
         else
           echo "Release ${{ github.ref_name }}" > release_notes.txt
         fi
-        
+
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
       with:

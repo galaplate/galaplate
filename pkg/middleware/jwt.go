@@ -73,7 +73,7 @@ func (j *JWTService) getJWTSecret() string {
 }
 
 func (j *JWTService) AuthMiddleware() fiber.Handler {
-    db := database.Connect
+	db := database.Connect
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {

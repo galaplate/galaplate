@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -15,16 +16,11 @@ import (
 	"gorm.io/gorm"
 )
 
-// RefreshDatabase interface for tests that need database refresh
-type RefreshDatabase interface {
-	RefreshDatabase() error
-}
-
 type TestCase struct {
 	suite.Suite
 	App               *fiber.App
 	DB                *gorm.DB
-	refreshDatabase   bool
+	isRefreshDatabase bool
 	databaseRefreshed bool
 }
 
@@ -41,13 +37,9 @@ func (tc *TestCase) SetupTest() {
 		log.Panicf("Warning: Error loading .env file: %v", err)
 	}
 
-	// Set environment for testing the default is using .env file
-	os.Setenv("APP_ENV", "testing")
-	// os.Setenv("DB_DATABASE", "galaplate")
-
 	// Refresh database if enabled and not already refreshed
-	if tc.refreshDatabase && !tc.databaseRefreshed {
-		if err := tc.RefreshDatabase(); err != nil {
+	if tc.isRefreshDatabase && !tc.databaseRefreshed {
+		if err := tc.refreshDatabase(); err != nil {
 			log.Printf("Warning: Failed to refresh database: %v", err)
 			log.Printf("Continuing with existing database state...")
 		} else {
@@ -66,22 +58,30 @@ func (tc *TestCase) SetupTest() {
 	// This ensures storage and other paths are relative to project root
 }
 
-// EnableRefreshDatabase enables database refresh for this test case
-func (tc *TestCase) EnableRefreshDatabase() {
-	tc.refreshDatabase = true
+// enableRefreshDatabase enables database refresh for this test case
+func (tc *TestCase) enableRefreshDatabase() {
+	tc.isRefreshDatabase = true
 }
 
-// RefreshDatabase runs the db:fresh command to refresh the test database
-func (tc *TestCase) RefreshDatabase() error {
+// refreshDatabase runs the db:fresh command to refresh the test database
+func (tc *TestCase) refreshDatabase() error {
 	cmd := exec.Command("go", "run", "main.go", "console", "db:fresh", "--force")
+	cmd.Stdout = io.Discard
+	cmd.Stderr = io.Discard
+
+	return cmd.Run()
+}
+
+// seedDatabase runs the database seeders
+func (tc *TestCase) seedDatabase() error {
+	cmd := exec.Command("go", "run", "main.go", "console", "db:seed")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
 }
 
-// RefreshDatabaseBetweenTests refreshes database before each test method
-func (tc *TestCase) RefreshDatabaseBetweenTests() {
-	// Reset the flag so database gets refreshed for each test
+// refreshDatabaseBetweenTests refreshes database before each test method
+func (tc *TestCase) refreshDatabaseBetweenTests() {
 	tc.databaseRefreshed = false
 }

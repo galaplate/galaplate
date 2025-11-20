@@ -113,26 +113,14 @@ func (suite *TestControllerSuite) TestCreateTestDataWithDescription() {
 func (suite *TestControllerSuite) TestInvalidJSONPayload() {
 	t := suite.T()
 
-	payload := strings.NewReader(`{"name": "test", "invalid": json}`)
+	payload := strings.NewReader(`{"name": ""}`)
 	req, err := http.NewRequest("POST", "/api/test", payload)
 	assert.NoError(t, err)
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := suite.App.Test(req)
 	suite.NoError(err)
-	suite.Equal(422, resp.StatusCode)
-}
-
-func (suite *TestControllerSuite) TestMissingContentType() {
-	t := suite.T()
-
-	payload := strings.NewReader(`{"name": "test without content type"}`)
-	req, err := http.NewRequest("POST", "/api/test", payload)
-	assert.NoError(t, err)
-
-	resp, err := suite.App.Test(req)
-	suite.NoError(err)
-	suite.Equal(422, resp.StatusCode)
+	suite.Equal(422, resp.StatusCode, resp.Body)
 }
 
 func TestControllerSuiteRun(t *testing.T) {

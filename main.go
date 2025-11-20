@@ -11,21 +11,15 @@ import (
 	"github.com/galaplate/galaplate/router"
 )
 
+func withSetupRoutes(ac *bootstrap.AppConfig) {
+	ac.SetupRoutes = router.SetupRouter
+}
+
 func main() {
-	cfg := bootstrap.DefaultConfig()
-	cfg.SetupRoutes = router.SetupRouter
-	cfg.AppSecret = env.Get("APP_SECRET")
-	// Optional: Customize GORM configuration
-	// cfg.DatabaseConfig = &bootstrap.DatabaseConfig{
-	//     GormConfig: &bootstrap.GormConfig{
-	//         Config: gorm.Config{
-	//             PrepareStmt: true,
-	//             DisableForeignKeyConstraintWhenMigrating: true,
-	//         },
-	//     },
-	// }
+	app := bootstrap.NewApp(withSetupRoutes)
+
 	if len(os.Args) > 1 && os.Args[1] == "console" {
-		bootstrap.Init(cfg)
+		// bootstrap.Init(cfg)
 		kernel := console.NewKernel()
 		pkgConsole.RegisterCommands(kernel)
 
@@ -35,7 +29,6 @@ func main() {
 		return
 	}
 
-	app := bootstrap.App(cfg)
 	port := env.Get("APP_PORT")
 	if port == "" {
 		port = "8080"

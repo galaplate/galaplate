@@ -48,9 +48,11 @@ func (tc *TestCase) SetupTest() {
 	}
 
 	// Use bootstrap to create a properly configured app for testing
-	cfg := bootstrap.DefaultConfig()
-	cfg.SetupRoutes = router.SetupRouter
-	app := bootstrap.App(cfg)
+	// cfg := bootstrap.DefaultConfig()
+	// cfg.SetupRoutes = router.SetupRouter
+	app := bootstrap.NewApp(func(ac *bootstrap.AppConfig) {
+        ac.SetupRoutes = router.SetupRouter
+    })
 
 	tc.App = app
 

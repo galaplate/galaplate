@@ -51,8 +51,8 @@ func (tc *TestCase) SetupTest() {
 	// cfg := bootstrap.DefaultConfig()
 	// cfg.SetupRoutes = router.SetupRouter
 	app := bootstrap.NewApp(func(ac *bootstrap.AppConfig) {
-        ac.SetupRoutes = router.SetupRouter
-    })
+		ac.SetupRoutes = router.SetupRouter
+	})
 
 	tc.App = app
 

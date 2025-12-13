@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/galaplate/core/database"
 	"github.com/galaplate/core/supports"
@@ -112,7 +113,7 @@ func (ac *AuthController) Login(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
-			"message": "Database error",
+            "message": fmt.Sprintf("Database error: %s", err.Error()),
 		})
 	}
 

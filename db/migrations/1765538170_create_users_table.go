@@ -27,6 +27,7 @@ func (m *Migration1765558170) Up(schema *database.Schema) error {
 		table.String("description")
 		table.Boolean("status").Default(false)
 		table.Timestamps()
+        table.DateTime("deleted_at").Nullable()
 	})
 }
 

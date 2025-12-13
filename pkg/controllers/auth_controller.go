@@ -113,7 +113,7 @@ func (ac *AuthController) Login(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
-            "message": fmt.Sprintf("Database error: %s", err.Error()),
+			"message": fmt.Sprintf("Database error: %s", err.Error()),
 		})
 	}
 

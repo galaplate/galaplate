@@ -451,4 +451,3 @@ func filterLogsByDate(logs []LogEntry, dateFrom, dateTo string) []LogEntry {
 
 	return filteredLogs
 }
-

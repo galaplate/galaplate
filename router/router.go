@@ -18,13 +18,12 @@ func SetupRouter(app *fiber.App) {
 	// Example routes with different policy combinations
 	api := app.Group("/api")
 
-    logViewer := app.Group("/admin/logs")
+	logViewer := app.Group("/admin/logs")
 	var logController = controllers.LogController{}
 	logViewer.Get("/", logController.Index)
 	logViewer.Get("/export", logController.Export)
 	logViewer.Post("/cleanup", logController.CleanupLogs)
 	logViewer.Get("/stats", logController.GetLogStats)
-
 
 	// Auth routes
 	var authController = controllers.AuthControllerInstance

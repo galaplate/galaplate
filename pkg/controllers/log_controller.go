@@ -31,7 +31,9 @@ func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error {
 
 	files, err := ioutil.ReadDir(logsDir)
 	if err != nil {
-		logger.Error("Unable to read logs directory:", err)
+		logger.Error("LogController@ShowLogsPage", map[string]any{
+			"messages": fmt.Sprintf("Unable to read logs directory: %s", err.Error()),
+		})
 		return ctx.Status(fiber.StatusInternalServerError).SendString("Unable to read logs directory")
 	}
 
@@ -63,7 +65,9 @@ func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error {
 
 		content, err := ioutil.ReadFile(logPath)
 		if err != nil {
-			logger.Error("Unable to read log file:", err)
+			logger.Error("LogController@ShowLogsPage",map[string]any{
+                "messages": fmt.Sprintf("Unable to read log file: %s", err.Error()),
+            })
 			return ctx.Status(fiber.StatusInternalServerError).SendString("Unable to read log file")
 		}
 

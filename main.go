@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/galaplate/core/bootstrap"
@@ -25,7 +26,7 @@ func main() {
 		pkgConsole.RegisterCommands(kernel)
 
 		if err := kernel.Run(os.Args); err != nil {
-			logger.Fatal("Console command failed: ", err.Error())
+			logger.Fatal(fmt.Sprintf("Console command failed: %s", err.Error()))
 		}
 		return
 	}
@@ -35,7 +36,9 @@ func main() {
 		port = "8080"
 	}
 
+    logger.Info(fmt.Sprintf("Server will started in port %s", port))
+
 	if err := app.Listen(":" + port); err != nil {
-		logger.Fatal("Server won't run: ", err.Error())
+		logger.Fatal(fmt.Sprintf("Server won't run: %s", err.Error()))
 	}
 }

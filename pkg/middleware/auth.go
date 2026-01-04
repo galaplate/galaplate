@@ -3,6 +3,7 @@ package middleware
 import (
 	"crypto/subtle"
 	"encoding/base64"
+	"fmt"
 	"strings"
 
 	config "github.com/galaplate/core/env"
@@ -34,7 +35,7 @@ func (m *AuthMiddleware) BasicAuth() fiber.Handler {
 
 		payload, err := base64.StdEncoding.DecodeString(auth[6:])
 		if err != nil {
-			logger.Error("Failed to decode base64 auth:", err)
+			logger.Error(fmt.Sprintf("Failed to decode base64 auth: %s", err.Error()), nil)
 			c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,
@@ -58,7 +59,7 @@ func (m *AuthMiddleware) BasicAuth() fiber.Handler {
 		var expectedPassword = config.Get("BASIC_AUTH_PASSWORD")
 
 		if expectedUsername == "" || expectedPassword == "" {
-			logger.Error("Basic auth credentials not configured")
+			logger.Error("Basic auth credentials not configured", nil)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"success": false,
 				"message": "Authentication not configured",
@@ -67,7 +68,9 @@ func (m *AuthMiddleware) BasicAuth() fiber.Handler {
 
 		if subtle.ConstantTimeCompare([]byte(username), []byte(expectedUsername)) != 1 ||
 			subtle.ConstantTimeCompare([]byte(password), []byte(expectedPassword)) != 1 {
-			logger.Warn("Failed basic auth attempt for username:", username)
+			logger.Warn("Failed basic auth attempt for username:", map[string]any{
+                "username": username,
+            })
 			c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,

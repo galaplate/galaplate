@@ -65,9 +65,9 @@ func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error {
 
 		content, err := ioutil.ReadFile(logPath)
 		if err != nil {
-			logger.Error("LogController@ShowLogsPage",map[string]any{
-                "messages": fmt.Sprintf("Unable to read log file: %s", err.Error()),
-            })
+			logger.Error("LogController@ShowLogsPage", map[string]any{
+				"messages": fmt.Sprintf("Unable to read log file: %s", err.Error()),
+			})
 			return ctx.Status(fiber.StatusInternalServerError).SendString("Unable to read log file")
 		}
 

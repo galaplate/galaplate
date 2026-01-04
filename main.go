@@ -36,7 +36,7 @@ func main() {
 		port = "8080"
 	}
 
-    logger.Info(fmt.Sprintf("Server will started in port %s", port))
+	logger.Info(fmt.Sprintf("Server will started in port %s", port))
 
 	if err := app.Listen(":" + port); err != nil {
 		logger.Fatal(fmt.Sprintf("Server won't run: %s", err.Error()))

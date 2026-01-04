@@ -69,8 +69,8 @@ func (m *AuthMiddleware) BasicAuth() fiber.Handler {
 		if subtle.ConstantTimeCompare([]byte(username), []byte(expectedUsername)) != 1 ||
 			subtle.ConstantTimeCompare([]byte(password), []byte(expectedPassword)) != 1 {
 			logger.Warn("Failed basic auth attempt for username:", map[string]any{
-                "username": username,
-            })
+				"username": username,
+			})
 			c.Set("WWW-Authenticate", `Basic realm="Restricted"`)
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,

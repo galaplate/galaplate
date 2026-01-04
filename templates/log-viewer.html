@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Viewer - BISMA API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --bg-dark: #1f2937;
+            --bg-darker: #111827;
+            --text-light: #f3f4f6;
+            --text-gray: #9ca3af;
+            --text-dark: #1f2937;
+            --border-color: #e5e7eb;
+            --border-dark: #374151;
+        }
+
+        [data-theme="dark"] {
+            --bg-light: #1f2937;
+            --bg-white: #111827;
+            --bg-dark: #0f172a;
+            --bg-darker: #0f172a;
+            --text-light: #9ca3af;
+            --text-dark: #f3f4f6;
+            --border-color: #374151;
+            --border-dark: #1f2937;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: var(--bg-light);
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Sidebar + Main */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-white);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            letter-spacing: 0.5px;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .file-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: var(--bg-light);
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-dark);
+            transition: all 0.2s;
+        }
+
+        .file-item:hover {
+            background: var(--bg-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .file-item.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Main Area */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0 12px;
+            gap: 8px;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 8px 0;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-gray);
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* Logs Area */
+        .logs-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: var(--bg-light);
+            padding: 0;
+        }
+
+        .logs-container {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .log-entry {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0;
+            margin-bottom: 8px;
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .log-entry:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary);
+        }
+
+        .log-entry.expanded {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .log-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .log-header.expanded {
+            border-bottom-color: var(--primary);
+        }
+
+        .log-header:hover {
+            background: var(--bg-light);
+        }
+
+        .log-level {
+            display: inline-block;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .log-level.info {
+            background: #dbeafe;
+            color: #0c4a6e;
+        }
+
+        .log-level.error {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+
+        .log-level.warning {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .log-level.debug {
+            background: #f3e8ff;
+            color: #581c87;
+        }
+
+        [data-theme="dark"] .log-level.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd;
+        }
+
+        [data-theme="dark"] .log-level.error {
+            background: rgba(248, 113, 113, 0.1);
+            color: #fca5a5;
+        }
+
+        [data-theme="dark"] .log-level.warning {
+            background: rgba(251, 146, 60, 0.1);
+            color: #fed7aa;
+        }
+
+        [data-theme="dark"] .log-level.debug {
+            background: rgba(168, 85, 247, 0.1);
+            color: #d8b4fe;
+        }
+
+        .log-timestamp {
+            font-size: 12px;
+            color: var(--text-gray);
+            font-family: 'Monaco', 'Menlo', monospace;
+            min-width: 180px;
+        }
+
+        .log-message {
+            flex: 1;
+            color: var(--text-dark);
+            font-size: 14px;
+            word-break: break-word;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .log-expand {
+            color: var(--text-gray);
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .log-expand.expanded {
+            transform: rotate(90deg);
+        }
+
+        .log-details {
+            padding: 12px 16px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .no-logs {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-gray);
+            font-size: 16px;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 16px;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border-color);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 12px;
+            padding: 0 24px 12px;
+        }
+
+        .stat-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px 16px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 24px;
+            background: var(--bg-white);
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .pagination-info {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-right: 16px;
+        }
+
+        .pagination-btn {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-size-select {
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .stats {
+                flex-direction: column;
+                padding: 0 12px 12px;
+            }
+
+            .stat-card {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">📋 Log Viewer</div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Log Files</div>
+                    <div class="file-list" id="fileList">
+                        {{range .LogFiles}}
+                        <div class="file-item {{if eq . $.CurrentFile}}active{{end}}" onclick="selectFile('{{.}}')">
+                            {{.}}
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Area -->
+            <div class="main-area">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span>🔍</span>
+                        <input
+                            type="text"
+                            id="searchInput"
+                            placeholder="Search logs..."
+                            onkeyup="filterLogs()"
+                        >
+                    </div>
+                    <select class="filter-select" id="levelFilter" onchange="filterLogs()">
+                        <option value="">All Levels</option>
+                        <option value="info">Info</option>
+                        <option value="error">Error</option>
+                        <option value="warning">Warning</option>
+                        <option value="debug">Debug</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="exportLogs('json')" title="Export as JSON">
+                        📥 JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportLogs('csv')" title="Export as CSV">
+                        📥 CSV
+                    </button>
+                    <button class="btn" onclick="clearSearch()" title="Clear filters">
+                        ✕ Clear
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCount">{{.TotalLogs}}</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="errorCount">{{.ErrorCount}}</div>
+                        <div class="stat-label">Errors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="infoCount">{{.InfoCount}}</div>
+                        <div class="stat-label">Info</div>
+                    </div>
+                </div>
+
+                <!-- Logs -->
+                <div class="logs-area">
+                    <div class="logs-container" id="logsContainer">
+                        {{if .Logs}}
+                            {{range $index, $log := .Logs}}
+                            <div class="log-entry" data-level="{{$log.Level}}" data-content="{{$log.Message}}" data-index="{{$index}}">
+                                <div class="log-header" onclick="toggleLogExpand(event)">
+                                    <span class="log-level {{$log.Level}}">{{$log.Level}}</span>
+                                    <span class="log-timestamp">{{$log.Timestamp}}</span>
+                                    <span class="log-message">{{$log.Message}}</span>
+                                    {{if $log.AdditionalInfo}}
+                                    <span class="log-expand">▶</span>
+                                    {{end}}
+                                </div>
+                                {{if $log.AdditionalInfo}}
+                                <div class="log-details" style="display: none;" data-json='{{$log.AdditionalInfoJSON}}'></div>
+                                {{end}}
+                            </div>
+                            {{end}}
+                        {{else}}
+                            <div class="no-logs">No logs available</div>
+                        {{end}}
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="paginationContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Embed logs data
+        try {
+            window.logsData = JSON.parse('{{.LogsJSON}}');
+        } catch (e) {
+            window.logsData = [];
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const theme = html.getAttribute('data-theme');
+            const newTheme = theme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const icon = document.getElementById('theme-icon');
+            icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function selectFile(filename) {
+            const currentFile = new URLSearchParams(window.location.search).get('file');
+            if (currentFile !== filename) {
+                window.location.href = `/admin/logs?file=${encodeURIComponent(filename)}`;
+            }
+        }
+
+        function toggleLogExpand(event) {
+            const entry = event.currentTarget.closest('.log-entry');
+            const details = entry.querySelector('.log-details');
+            const expandIcon = entry.querySelector('.log-expand');
+
+            if (details) {
+                const isHidden = details.style.display === 'none';
+                details.style.display = isHidden ? 'block' : 'none';
+                entry.classList.toggle('expanded', isHidden);
+
+                if (expandIcon) {
+                    expandIcon.classList.toggle('expanded', isHidden);
+                    if (isHidden && !details.textContent) {
+                        try {
+                            const jsonStr = details.getAttribute('data-json');
+                            const parsed = JSON.parse(jsonStr);
+                            details.textContent = JSON.stringify(parsed, null, 2);
+                        } catch (e) {
+                            details.textContent = 'Error parsing JSON';
+                        }
+                    }
+                }
+            }
+        }
+
+        function filterLogs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const levelFilter = document.getElementById('levelFilter').value;
+            const entries = document.querySelectorAll('.log-entry');
+
+            let visibleCount = 0;
+            let errorCount = 0;
+            let infoCount = 0;
+
+            entries.forEach(entry => {
+                const level = entry.getAttribute('data-level');
+                const content = entry.getAttribute('data-content').toLowerCase();
+
+                const levelMatch = !levelFilter || level === levelFilter;
+                const contentMatch = !searchTerm || content.includes(searchTerm);
+                const isVisible = levelMatch && contentMatch;
+
+                entry.style.display = isVisible ? '' : 'none';
+
+                if (isVisible) {
+                    visibleCount++;
+                    if (level === 'error') errorCount++;
+                    if (level === 'info') infoCount++;
+                }
+            });
+
+            document.getElementById('totalCount').textContent = visibleCount;
+            document.getElementById('errorCount').textContent = errorCount;
+            document.getElementById('infoCount').textContent = infoCount;
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('levelFilter').value = '';
+            filterLogs();
+        }
+
+        function exportLogs(format) {
+            const currentFile = new URLSearchParams(window.location.search).get('file');
+            const url = `/admin/logs/export?file=${encodeURIComponent(currentFile)}&format=${format}`;
+            window.location.href = url;
+        }
+
+        function goToPage(page) {
+            const currentFile = new URLSearchParams(window.location.search).get('file');
+            const pageSize = document.querySelector('.page-size-select')?.value || '50';
+            const url = `/admin/logs?file=${encodeURIComponent(currentFile)}&page=${page}&page_size=${pageSize}`;
+            window.location.href = url;
+        }
+
+        function changePageSize(pageSize) {
+            const currentFile = new URLSearchParams(window.location.search).get('file');
+            const url = `/admin/logs?file=${encodeURIComponent(currentFile)}&page=1&page_size=${pageSize}`;
+            window.location.href = url;
+        }
+
+        function renderPagination() {
+            const params = new URLSearchParams(window.location.search);
+            const currentPage = parseInt(params.get('page')) || 1;
+            const pageSize = parseInt(params.get('page_size')) || 50;
+
+            // Get stats from DOM
+            const totalLogs = parseInt(document.getElementById('totalCount').textContent) || 0;
+            const totalPages = Math.ceil(totalLogs / pageSize) || 1;
+            const hasPrevious = currentPage > 1;
+            const hasNext = currentPage < totalPages;
+
+            if (totalPages <= 1) return;
+
+            let html = '<div class="pagination">';
+            html += `<div class="pagination-info">Page ${currentPage} of ${totalPages} • ${totalLogs} total logs</div>`;
+
+            html += `<button class="pagination-btn" onclick="goToPage(1)" ${!hasPrevious ? 'disabled' : ''}>« First</button>`;
+            html += `<button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${!hasPrevious ? 'disabled' : ''}>‹ Prev</button>`;
+
+            // Page numbers
+            html += '<div style="display: flex; gap: 4px; margin: 0 8px;">';
+
+            if (currentPage > 2) {
+                html += '<button class="pagination-btn" onclick="goToPage(1)">1</button>';
+            }
+            if (currentPage > 3) {
+                html += '<span style="color: var(--text-gray); padding: 6px;">...</span>';
+            }
+
+            const start = Math.max(1, currentPage - 1);
+            const end = Math.min(totalPages, currentPage + 1);
+            for (let i = start; i <= end; i++) {
+                if (i === currentPage) {
+                    html += `<button class="pagination-btn active">${i}</button>`;
+                } else {
+                    html += `<button class="pagination-btn" onclick="goToPage(${i})">${i}</button>`;
+                }
+            }
+
+            if (currentPage < totalPages - 1) {
+                html += '<span style="color: var(--text-gray); padding: 6px;">...</span>';
+            }
+            if (currentPage < totalPages - 1) {
+                html += `<button class="pagination-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+
+            html += '</div>';
+
+            html += `<button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${!hasNext ? 'disabled' : ''}>Next ›</button>`;
+            html += `<button class="pagination-btn" onclick="goToPage(${totalPages})" ${!hasNext ? 'disabled' : ''}>Last »</button>`;
+
+            html += '<select class="page-size-select" onchange="changePageSize(this.value)">';
+            [25, 50, 100, 250, 500].forEach(size => {
+                const selected = size === pageSize ? 'selected' : '';
+                html += `<option value="${size}" ${selected}>${size} per page</option>`;
+            });
+            html += '</select>';
+            html += '</div>';
+
+            document.getElementById('paginationContainer').innerHTML = html;
+        }
+
+        // Load theme preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            updateThemeIcon();
+            renderPagination();
+        });
+    </script>
+</body>
+</html>
+

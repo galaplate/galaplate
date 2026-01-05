@@ -1,0 +1,11 @@
+# Authentication Configuration
+
+default: jwt
+
+guards:
+  jwt:
+    driver: jwt
+    secret: ${JWT_SECRET:your-secret-key}
+    expiration: ${JWT_EXPIRATION:86400}
+    refresh_expiration: ${JWT_REFRESH_EXPIRATION:604800}
+    algorithm: HS256

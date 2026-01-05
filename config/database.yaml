@@ -1,0 +1,32 @@
+# Database Configuration
+
+default: ${DB_CONNECTION:sqlite}
+
+connections:
+  sqlite:
+    driver: sqlite
+    database: ${DB_SQLITE_PATH:./storage/database.db}
+
+  mysql:
+    driver: mysql
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:3306}
+    database: ${DB_DATABASE:galaplate}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    charset: utf8mb4
+    collation: utf8mb4_unicode_ci
+    prefix: ""
+    pool_size: 10
+    max_idle_connections: 5
+
+  postgres:
+    driver: postgres
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:5432}
+    database: ${DB_DATABASE:galaplate}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+    sslmode: ${DB_SSL_MODE:disable}
+    pool_size: 10
+    max_idle_connections: 5

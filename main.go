@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/galaplate/core/bootstrap"
+	"github.com/galaplate/core/config"
 	"github.com/galaplate/core/console"
-	"github.com/galaplate/core/env"
 	"github.com/galaplate/core/logger"
 	pkgConsole "github.com/galaplate/galaplate/console"
 	_ "github.com/galaplate/galaplate/db/migrations"
@@ -31,7 +31,7 @@ func main() {
 		return
 	}
 
-	port := env.Get("APP_PORT")
+	port := config.ConfigString("app.port")
 	if port == "" {
 		port = "8080"
 	}

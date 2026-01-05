@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/galaplate/core/config"
 	"github.com/galaplate/core/database"
-	"github.com/galaplate/core/env"
 	"github.com/galaplate/galaplate/pkg/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -65,7 +65,7 @@ func (j *JWTService) ValidateToken(tokenString string) (*JWTClaims, error) {
 }
 
 func (j *JWTService) getJWTSecret() string {
-	secret := env.Get("APP_SECRET")
+	secret := config.ConfigString("auth.guards.jwt.secret")
 	if secret == "" {
 		secret = "your-secret-key"
 	}

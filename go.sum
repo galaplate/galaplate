@@ -10,6 +10,8 @@ github.com/galaplate/core v0.0.30 h1:bjvsdLVmwHlNKiE+FqUgaeNCx5ZCicc5UFDbeeY8k0g
 github.com/galaplate/core v0.0.30/go.mod h1:irmf8KgJUf2L6Zv960cKsfTLnNQIc3yu5uG/zvutPoI=
 github.com/galaplate/core v0.0.31 h1:4vDcKLN59mq1itNSkS2KWX2ERP8YuzZs6pYNegILYlg=
 github.com/galaplate/core v0.0.31/go.mod h1:o4Opf+SYNkLIuUnKVJX0Y1iJjU/V7uxPsxXt5tQ0k8k=
+github.com/galaplate/core v0.0.32 h1:Bxv6I1gavdIgkm9kVggvN3X7l6Y3tmUkjIbyovKTPNw=
+github.com/galaplate/core v0.0.32/go.mod h1:o4Opf+SYNkLIuUnKVJX0Y1iJjU/V7uxPsxXt5tQ0k8k=
 github.com/go-playground/assert/v2 v2.2.0 h1:JvknZsQTYeFEAhQwI4qEt9cyV5ONwRHC+lYKSsYSR8s=
 github.com/go-playground/assert/v2 v2.2.0/go.mod h1:VDjEfimB/XKnb+ZQfWdccd7VUvScMdVu0Titje2rxJ4=
 github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/oXslEjJA=

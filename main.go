@@ -11,6 +11,7 @@ import (
 	pkgConsole "github.com/galaplate/galaplate/console"
 	_ "github.com/galaplate/galaplate/db/migrations"
 	"github.com/galaplate/galaplate/router"
+	_ "github.com/galaplate/galaplate/pkg/jobs"
 )
 
 func withSetupRoutes(ac *bootstrap.AppConfig) {

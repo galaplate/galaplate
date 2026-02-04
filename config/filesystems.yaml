@@ -1,0 +1,52 @@
+default: ${FILESYSTEM_DRIVER:local}
+
+max_size: ${FILESYSTEM_MAX_SIZE:10485760}
+
+allowed_types:
+  - image/jpeg
+  - image/jpg
+  - image/png
+  - image/gif
+  - application/pdf
+  - application/msword
+  - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  - application/vnd.ms-excel
+  - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+disks:
+  local:
+    driver: local
+    path: ${FILESYSTEM_LOCAL_PATH:storage/app/uploads}
+    url: ${FILESYSTEM_LOCAL_URL:/storage/app/uploads}
+    visibility: private
+
+  s3:
+    driver: s3
+    region: ${AWS_REGION:ap-southeast-1}
+    bucket: ${AWS_BUCKET:}
+    key: ${AWS_ACCESS_KEY_ID:}
+    secret: ${AWS_SECRET_ACCESS_KEY:}
+    url: ${AWS_URL:}
+    endpoint: ${S3_ENDPOINT:}
+    acl: ${AWS_ACL:private}
+    storage_class: ${AWS_STORAGE_CLASS:STANDARD}
+    use_path_style_endpoint: ${AWS_USE_PATH_STYLE:false}
+    visibility: private
+    path_prefix: ${AWS_PATH_PREFIX:}
+
+
+  gcs:
+    driver: gcs
+    project_id: ${GCP_PROJECT:}
+    key_file: ${GOOGLE_APPLICATION_CREDENTIALS:}
+    bucket: ${GCS_BUCKET:}
+    url: ${GCS_BASE_URL:}
+    metadata: {}
+    visibility: private
+
+  google_drive:
+    driver: google_drive
+    service_account_file: ${GOOGLE_SERVICE_ACCOUNT_FILE:service-account.json}
+    folder_id: ${GOOGLE_DRIVE_FOLDER_ID:}
+    url: ${GOOGLE_DRIVE_BASE_URL:https://drive.google.com}
+    visibility: private

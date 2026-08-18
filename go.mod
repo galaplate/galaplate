@@ -3,14 +3,12 @@ module github.com/galaplate/galaplate
 go 1.25.0
 
 require (
-	github.com/galaplate/core v0.0.37
+	github.com/galaplate/core v0.0.38
 	github.com/gofiber/fiber/v3 v3.5.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/stretchr/testify v1.12.0
 	gorm.io/gorm v1.31.2
 )
-
-replace github.com/galaplate/core => ../core
 
 require (
 	cloud.google.com/go/auth v0.23.1 // indirect

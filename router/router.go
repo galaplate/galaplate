@@ -1,15 +1,14 @@
 package router
 
 import (
+	"github.com/galaplate/core/fiber"
 	"github.com/galaplate/galaplate/pkg/controllers"
 	"github.com/galaplate/galaplate/pkg/middleware"
-	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 func SetupRouter(app *fiber.App) {
 
-	app.Use(cors.New())
+	app.Use(fiber.NewCORS())
 
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Hello world")

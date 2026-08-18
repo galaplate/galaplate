@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/galaplate/core/fiber"
 )
 
 type LogController struct{}

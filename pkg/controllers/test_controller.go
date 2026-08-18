@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/galaplate/core/supports"
-	"github.com/gofiber/fiber/v3"
+	"github.com/galaplate/core/fiber"
 )
 
 type TestController struct{}

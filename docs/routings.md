@@ -8,7 +8,7 @@ Routes are defined in `router/router.go` using Fiber's API.
 package router
 
 import (
-    "github.com/gofiber/fiber/v3"
+    "github.com/galaplate/core/fiber"
     "github.com/galaplate/galaplate/pkg/controllers"
     "github.com/galaplate/galaplate/pkg/middleware"
 )
@@ -79,7 +79,7 @@ Controllers are structs with handler methods:
 ```go
 package controllers
 
-import "github.com/gofiber/fiber/v3"
+import "github.com/galaplate/core/fiber"
 
 type UserController struct{}
 

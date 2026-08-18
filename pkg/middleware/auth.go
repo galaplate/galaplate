@@ -8,7 +8,7 @@ import (
 
 	config "github.com/galaplate/core/env"
 	"github.com/galaplate/core/logger"
-	"github.com/gofiber/fiber/v3"
+	"github.com/galaplate/core/fiber"
 )
 
 type AuthMiddleware struct {

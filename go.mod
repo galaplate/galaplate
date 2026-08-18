@@ -4,7 +4,6 @@ go 1.25.0
 
 require (
 	github.com/galaplate/core v0.0.38
-	github.com/gofiber/fiber/v3 v3.5.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/stretchr/testify v1.12.0
 	gorm.io/gorm v1.31.2
@@ -38,6 +37,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.30.3 // indirect
 	github.com/go-sql-driver/mysql v1.10.0 // indirect
+	github.com/gofiber/fiber/v3 v3.5.0 // indirect
 	github.com/gofiber/schema v1.8.3 // indirect
 	github.com/gofiber/template/html/v3 v3.0.0 // indirect
 	github.com/gofiber/template/v2 v2.0.0 // indirect

@@ -9,7 +9,7 @@ import (
 	"github.com/galaplate/galaplate/pkg/dto"
 	"github.com/galaplate/galaplate/pkg/middleware"
 	"github.com/galaplate/galaplate/pkg/models"
-	"github.com/gofiber/fiber/v3"
+	"github.com/galaplate/core/fiber"
 	"gorm.io/gorm"
 )
 

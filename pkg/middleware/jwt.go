@@ -8,7 +8,7 @@ import (
 	"github.com/galaplate/core/config"
 	"github.com/galaplate/core/database"
 	"github.com/galaplate/galaplate/pkg/models"
-	"github.com/gofiber/fiber/v3"
+	"github.com/galaplate/core/fiber"
 	"github.com/golang-jwt/jwt/v5"
 )
 

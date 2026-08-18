@@ -16,8 +16,8 @@ This creates `pkg/dto/create_user_request.go`:
 package dto
 
 import (
+    "github.com/galaplate/core/fiber"
     "github.com/galaplate/core/supports"
-    "github.com/gofiber/fiber/v3"
 )
 
 type CreateUserRequest struct {

@@ -1,438 +1,72 @@
 # Project Structure
 
-Galaplate follows Go best practices and conventions for project organization. This guide explains the purpose of each directory and file in the project.
-
-## Overview
-
 ```
 galaplate/
-├── db/                     # Database related files
-│   └── migrations/        # SQL migration files
-│       └── 20250830031846_create_users_table.sql
+├── config/                 # YAML configuration files
+│   ├── app.yaml
+│   ├── database.yaml
+│   ├── auth.yaml
+│   └── filesystems.yaml
+├── console/
+│   └── kernel.go          # Custom console command registration
+├── db/
+│   ├── migrations/        # Go-based migration files
+│   └── seeders/           # Database seeders
 ├── docs/                  # Documentation (Docsify)
-│   ├── index.html        # Docsify configuration
-│   ├── README.md         # Main documentation
-│   ├── _sidebar.md       # Navigation sidebar
-│   ├── _navbar.md        # Top navigation
-│   ├── _coverpage.md     # Cover page
-│   └── ...               # Other documentation files
-├── internal/              # Internal packages
-│   └── stubs/           # Code generation templates
-│       └── migrations/  # Migration stubs for different DB types
-├── middleware/            # HTTP middleware
-│   └── auth.go           # Authentication middleware
-├── pkg/                   # Main application packages
-│   └── controllers/      # HTTP request handlers
-│       └── log_controller.go
-│   └── jobs/        # Jobs path
-│       └── sendemail.go
-│   └── models/        # Models path
-│       └── user.go
-│   └── scheuduler/        # Scheduler path
-│       └── dailycleanup.go
-├── router/                # Route definitions
-│   └── router.go         # HTTP routes setup
+├── pkg/
+│   ├── controllers/       # HTTP request handlers
+│   ├── dto/               # Request/response structs
+│   ├── jobs/              # Background job handlers
+│   ├── middleware/        # HTTP middleware
+│   ├── models/            # GORM models
+│   ├── policies/          # Authorization policies
+│   └── scheduler/         # Cron task handlers
+├── router/
+│   └── router.go          # Route definitions
+├── storage/
+│   ├── logs/              # Application logs
+│   └── app/               # File uploads
 ├── templates/             # HTML templates
-│   └── logs.html         # Log viewer template
-├── .env                   # Environment variables (local)
-├── .env.example          # Environment variables template
-├── .gitignore           # Git ignore rules
-├── go.mod               # Go module definition
-├── go.sum               # Go module checksums
-├── main.go              # Application entry point
-├── Makefile             # Development commands
-├── galaplate            # Compiled binary
-├── server               # Alternative binary name
-└── README.md            # Project documentation
+├── tests/                 # Test suites
+├── main.go                # Application entry point
+├── go.mod
+├── Makefile
+└── .env
 ```
 
-## Directory Details
+## Entry Point
 
-### `/db` - Database Layer
-
-All database-related functionality.
-
-```
-db/
-└── migrations/           # SQL migration files
-    └── 20250830031846_create_users_table.sql
-```
-
-**Key Files:**
-- `migrations/` - SQL files for database schema changes
-- Database connection is handled through console commands
-
-**Example Migration:**
-```sql
--- 20250609004425_create_jobs_table.sql
-CREATE TABLE jobs (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    type VARCHAR(255) NOT NULL,
-    payload TEXT,
-    state VARCHAR(16) NOT NULL,
-    -- ... other fields
-);
-```
-
-### `/internal/stubs` - Code Generation Templates
-
-Templates used by the console command system for code generation.
-
-```
-internal/stubs/
-└── migrations/          # Migration templates
-    ├── *.mysql.sql.stub    # MySQL migration templates
-    └── *.pgsql.sql.stub    # PostgreSQL migration templates
-```
-
-**Purpose:**
-- Provide database-specific migration templates
-- Support for different database drivers
-- Consistent code generation across projects
-
-### `/middleware` - HTTP Middleware
-
-Reusable HTTP middleware components.
-
-```
-middleware/
-└── auth.go              # Authentication middleware
-```
-
-**Purpose:**
-- HTTP request/response middleware
-- Authentication and authorization
-- CORS handling
-- Request logging
-
-### `/middleware` - HTTP Middleware
-
-Reusable HTTP middleware components.
-
-```
-middleware/
-└── auth.go              # Authentication middleware
-```
-
-**Common Middleware:**
-- Authentication (JWT, Basic Auth)
-- CORS handling
-- Request logging
-- Rate limiting
-- Error handling
-
-**Example:**
-```go
-// middleware/auth.go
-func BasicAuth() fiber.Handler {
-    return basicauth.New(basicauth.Config{
-        Users: map[string]string{
-            username: password,
-        },
-    })
-}
-```
-
-### `/pkg` - Core Application Logic
-
-Main application packages following Go conventions.
-
-```
-pkg/
-└── controllers/         # HTTP request handlers
-    └── log_controller.go
-```
-
-**Current Structure:**
-- `controllers/` - HTTP request handlers (log controller for admin interface)
-- Additional packages are generated by the CLI as needed
-
-#### Controllers
-Handle HTTP requests and responses.
-
-```go
-// pkg/controllers/log_controller.go
-type LogController struct {}
-
-func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error {
-    // Handle log viewer request
-}
-```
-
-#### Models
-Define database entities and business logic.
-
-```go
-// pkg/models/job.go
-type Job struct {
-    ID          uint            `gorm:"primaryKey" json:"id"`
-    Type        string          `gorm:"not null" json:"type"`
-    Payload     json.RawMessage `gorm:"type:text" json:"payload"`
-    State       JobState        `gorm:"type:varchar(16);not null" json:"state"`
-    // ... other fields
-}
-```
-
-#### Controllers
-Handle HTTP requests and responses.
-
-```go
-// pkg/controllers/log_controller.go
-type LogController struct{}
-
-func (c *LogController) ShowLogsPage(ctx *fiber.Ctx) error {
-    // Handle log viewer request
-}
-```
-
-#### Additional Packages
-The CLI generates additional packages as needed:
-- `models/` - Database models (generated via `make:model`)
-- `dto/` - Data Transfer Objects (generated via `make:dto`)
-- `queue/` - Background job system (generated via `make:job`)
-- `supports/` - Support utility functions (generated as needed)
-
-### `/router` - Route Definitions
-
-HTTP route configuration and setup.
-
-```
-router/
-└── router.go            # Route definitions
-```
-
-**Purpose:**
-- Define all HTTP routes
-- Apply middleware to routes
-- Group related routes
-
-**Example:**
-```go
-// router/router.go
-func SetupRouter(app *fiber.App) {
-    app.Use(cors.New())
-
-    app.Get("/", healthCheck)
-    app.Get("/logs", middleware.BasicAuth(), logController.ShowLogsPage)
-
-    // API routes
-    api := app.Group("/api")
-    api.Get("/users", userController.GetUsers)
-}
-```
-
-### `/templates` - HTML Templates
-
-HTML templates for web interfaces.
-
-```
-templates/
-└── logs.html           # Log viewer template
-```
-
-**Purpose:**
-- Admin interfaces
-- Web dashboards
-- Email templates (when implemented)
-
-### `/templates` - HTML Templates
-
-HTML templates for web interfaces.
-
-```
-templates/
-└── logs.html           # Log viewer template
-```
-
-**Purpose:**
-- Admin interfaces
-- Web dashboards
-- Email templates (when implemented)
-
-## Configuration Files
-
-### `main.go` - Application Entry Point
-
-The main application file that:
-- Initializes the Fiber app
-- Sets up middleware
-- Connects to database
-- Starts background services
-- Configures error handling
+`main.go` bootstraps the application:
 
 ```go
 func main() {
-    // Load environment
-    secret := env.Get("APP_SECRET")
+    app := bootstrap.NewApp(withSetupRoutes)
 
-    // Create Fiber app
-    app := fiber.New(fiber.Config{
-        ErrorHandler: globalErrorHandler,
-        Views: engine,
-    })
-
-    // Setup database
-    db.ConnectDB()
-
-    // Setup routes
-    router.SetupRouter(app)
-
-    // Start background services
-    queue := queue.New(100)
-    queue.Start(5)
-
-    scheduler := scheduler.New()
-    scheduler.Start()
-
-    // Start server
-    app.Listen(":" + env.Get("APP_PORT"))
-}
-```
-
-### `Makefile` - Development Commands
-
-Provides convenient commands for development:
-
-```makefile
-# Development
-dev:                    # Start with hot reload
-run:                    # Build and run
-build:                  # Build binary
-test:                   # Run tests
-
-# Database
-db-up:                  # Run migrations
-db-down:                # Rollback migration
-db-fresh:               # Reset and migrate
-
-# Code Generation
-model:                  # Generate model
-dto:                    # Generate DTO
-```
-
-### `.env.example` - Environment Template
-
-Template for environment configuration:
-
-```env
-APP_NAME=Galaplate
-APP_ENV=local
-APP_DEBUG=true
-APP_PORT=8080
-APP_SECRET=your-secret-key
-
-DB_CONNECTION=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=galaplate
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-## Design Patterns
-
-### MVC Architecture
-
-Galaplate follows the Model-View-Controller pattern:
-
-- **Models** (`/pkg/models/`) - Data layer and business logic
-- **Views** (`/views/`) - Presentation layer (HTML templates)
-- **Controllers** (`/pkg/controllers/`) - Request handling logic
-
-### Repository Pattern
-
-Database access is abstracted through repositories:
-
-```go
-type UserRepository interface {
-    GetByID(id uint) (*User, error)
-    Create(user *User) error
-    Update(user *User) error
-    Delete(id uint) error
-}
-```
-
-### Service Layer
-
-Business logic is encapsulated in service layers:
-
-```go
-type UserService struct {
-    repo UserRepository
-}
-
-func (s *UserService) CreateUser(data CreateUserDTO) (*User, error) {
-    // Business logic
-}
-```
-
-### Dependency Injection
-
-Dependencies are injected through constructors:
-
-```go
-func NewUserController(service UserService) *UserController {
-    return &UserController{
-        service: service,
+    if len(os.Args) > 1 && os.Args[1] == "console" {
+        // Run console commands
+        kernel := console.NewKernel()
+        pkgConsole.RegisterCommands(kernel)
+        kernel.Run(os.Args)
+        return
     }
+
+    // Start HTTP server
+    port := config.ConfigString("app.port")
+    app.Listen(":" + port)
 }
 ```
 
-## Best Practices
+## Where to Put Code
 
-### File Naming
-
-- Use snake_case for files: `user_controller.go`
-- Use descriptive names: `email_service.go`
-- Group related files in packages
-
-### Package Organization
-
-- Keep packages focused and cohesive
-- Avoid circular dependencies
-- Use interfaces for abstraction
-
-### Error Handling
-
-- Return errors explicitly
-- Use structured error types
-- Log errors with context
-
-### Testing
-
-- Place tests next to source files: `user_test.go`
-- Use table-driven tests
-- Mock external dependencies
-
-## Extending the Structure
-
-### Adding New Features
-
-1. **Create model** in `/pkg/models/`
-2. **Add controller** in `/pkg/controllers/`
-3. **Define routes** in `/router/router.go`
-4. **Add migrations** in `/db/migrations/`
-5. **Write tests** alongside source files
-
-### Adding Middleware
-
-1. Create middleware in `/middleware/`
-2. Apply in `/router/router.go`
-3. Document usage and configuration
-
-### Adding Background Jobs
-
-1. Implement job in `/pkg/queue/jobs/`
-2. Register job in queue system
-3. Dispatch jobs from controllers
-
-## Next Steps
-
-- **[Console Commands](/console-commands)** - Learn about the powerful code generation tools
-- **[Database](/database)** - Understand database operations and migrations
-- **[Configuration](/configuration)** - Configure your environment and database
-- **[API Reference](/api-reference)** - Explore available endpoints
-
----
-
-This structure provides a solid foundation for building scalable Go applications while maintaining clean code organization and following Go best practices.
+| Task | Location |
+|------|----------|
+| Add a route | `router/router.go` |
+| Add a controller | `pkg/controllers/` |
+| Add a model | `pkg/models/` |
+| Add a migration | `db/migrations/` |
+| Add a seeder | `db/seeders/` |
+| Add middleware | `pkg/middleware/` |
+| Add a background job | `pkg/jobs/` |
+| Add a cron task | `pkg/scheduler/` |
+| Add a policy | `pkg/policies/` |
+| Add a DTO | `pkg/dto/` |

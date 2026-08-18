@@ -1,322 +1,84 @@
 # Console Commands
 
-Galaplate includes a powerful console command system that provides code generation, database management, and custom command capabilities. All console commands are executed through the main application entry point.
+Galaplate includes a console command system for code generation and database management.
 
-## Basic Usage
+## Usage
 
 ```bash
-# General syntax
 go run main.go console <command> [arguments]
-
-# List all available commands
-go run main.go console list
-
-# Get help
-go run main.go console
 ```
 
-## Available Commands
+## Database Commands
 
-### Database Commands
+| Command | Description |
+|---------|-------------|
+| `db:up` | Run pending migrations |
+| `db:down` | Rollback last batch |
+| `db:status` | Show migration status |
+| `db:fresh` | Drop all tables and re-run migrations |
+| `db:reset` | Rollback all and re-run |
+| `db:seed` | Run database seeders |
+| `db:create <name>` | Create a new migration file |
 
-#### `db:create`
-Create a new database migration file.
+## Generator Commands
 
-```bash
-go run main.go console db:create create_users_table
-```
+| Command | Description | Output |
+|---------|-------------|--------|
+| `make:model <Name>` | Generate a GORM model | `pkg/models/name.go` |
+| `make:dto <Name>` | Generate a DTO struct | `pkg/dto/name.go` |
+| `make:job <Name>` | Generate a queue job | `pkg/jobs/name.go` |
+| `make:cron <Name>` | Generate a cron task | `pkg/scheduler/name.go` |
+| `make:seeder <Name>` | Generate a seeder | `db/seeders/name.go` |
+| `make:factory <Name>` | Generate a model factory | `db/factories/name.go` |
+| `make:policy <Name>` | Generate a policy | `pkg/policies/name.go` |
 
-#### `db:up`
-Run pending database migrations.
+## Custom Commands
 
-```bash
-go run main.go console db:up
-```
-
-#### `db:down`
-Rollback the last database migration.
-
-```bash
-go run main.go console db:down
-```
-
-#### `db:status`
-Show current migration status.
-
-```bash
-go run main.go console db:status
-```
-
-#### `db:fresh`
-Drop all tables and re-run all migrations.
-
-```bash
-go run main.go console db:fresh
-```
-
-#### `db:reset`
-Rollback all migrations and re-run them.
-
-```bash
-go run main.go console db:reset
-```
-
-#### `db:seed`
-Run database seeders.
-
-```bash
-go run main.go console db:seed
-```
-
-### Code Generation Commands
-
-#### `make:model`
-Generate a new model file.
-
-```bash
-go run main.go console make:model User
-```
-
-**Generated file:** `pkg/models/user.go`
-
-**Example output:**
-```go
-package models
-
-import (
-    "time"
-    "gorm.io/gorm"
-)
-
-type User struct {
-    ID        uint           `json:"id" gorm:"primaryKey"`
-    CreatedAt time.Time      `json:"created_at"`
-    UpdatedAt time.Time      `json:"updated_at"`
-    DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
-}
-```
-
-#### `make:dto`
-Generate a new Data Transfer Object (DTO).
-
-```bash
-go run main.go console make:dto UserDto
-```
-
-**Generated file:** `pkg/dto/user_dto.go`
-
-#### `make:job`
-Generate a new background job.
-
-```bash
-go run main.go console make:job ProcessEmailJob
-```
-
-**Generated file:** `pkg/queue/jobs/process_email_job.go`
-
-#### `make:seeder`
-Generate a new database seeder.
-
-```bash
-go run main.go console make:seeder UserSeeder
-```
-
-**Generated file:** `db/seeders/user_seeder.go`
-
-#### `make:cron`
-Generate a new cron job for the scheduler.
-
-```bash
-go run main.go console make:cron DailyReportCron
-```
-
-**Generated file:** `pkg/scheduler/daily_report_cron.go`
-
-### Utility Commands
-
-#### `list`
-Display all available console commands with descriptions.
-
-```bash
-go run main.go console list
-```
-
-#### `example`
-Run an example command to test the console system.
-
-```bash
-go run main.go console example
-```
-
-#### `interactive`
-Start an interactive demonstration of console features.
-
-```bash
-go run main.go console interactive
-```
-
-## Creating Custom Commands
-
-### Step 1: Create Command File
-
-Create a new command file in `pkg/console/commands/`:
+Register custom commands in `console/kernel.go`:
 
 ```go
-// pkg/console/commands/my_custom_command.go
-package commands
+package console
 
-import (
-    "fmt"
-)
+import "github.com/galaplate/core/console"
 
-type MyCustomCommand struct{}
-
-func (c *MyCustomCommand) GetSignature() string {
-    return "my:custom"
-}
-
-func (c *MyCustomCommand) GetDescription() string {
-    return "My custom command description"
-}
-
-func (c *MyCustomCommand) Execute(args []string) error {
-    fmt.Println("Executing my custom command!")
-
-    if len(args) > 0 {
-        fmt.Printf("Arguments: %v\n", args)
-    }
-
-    return nil
+func RegisterCommands(kernel *console.Kernel) {
+    kernel.Register(&MyCustomCommand{})
 }
 ```
 
-### Step 2: Register Command
-
-Add your command to the registration in `pkg/console/commands.go`:
-
-```go
-func (k *Kernel) RegisterCommands() {
-    // Example command (you can remove this)
-    k.Register(&commands.ExampleCommand{})
-
-    // Interactive demo command
-    k.Register(&commands.InteractiveCommand{})
-
-    // Register your custom command
-    k.Register(&commands.MyCustomCommand{})
-}
-```
-
-### Step 3: Use Your Command
-
-```bash
-go run main.go console my:custom arg1 arg2
-```
-
-## Command Interface
-
-All commands must implement the `Command` interface:
+A command implements the `Command` interface:
 
 ```go
 type Command interface {
-    GetSignature() string    // Command name (e.g., "make:model")
-    GetDescription() string  // Brief description for help
-    Execute(args []string) error // Command logic
+    GetSignature() string
+    GetDescription() string
+    Execute(args []string) error
 }
 ```
 
-### Command Naming Conventions
-
-- Use `:` to separate command namespaces (e.g., `make:model`, `db:up`)
-- Use lowercase with hyphens for multi-word commands (e.g., `cache:clear`)
-- Group related commands under the same namespace
-
-### Best Practices
-
-1. **Error Handling**: Always return meaningful errors from `Execute()`
-2. **Argument Validation**: Validate required arguments early
-3. **User Feedback**: Provide clear success/failure messages
-4. **Help Text**: Include usage examples in descriptions
-
-### Example: Advanced Custom Command
+Example:
 
 ```go
-type DeployCommand struct{}
+package commands
 
-func (c *DeployCommand) GetSignature() string {
-    return "deploy"
+import "fmt"
+
+type GreetCommand struct{}
+
+func (c *GreetCommand) GetSignature() string {
+    return "greet"
 }
 
-func (c *DeployCommand) GetDescription() string {
-    return "Deploy application to specified environment"
+func (c *GreetCommand) GetDescription() string {
+    return "Print a greeting"
 }
 
-func (c *DeployCommand) Execute(args []string) error {
-    if len(args) < 1 {
-        return fmt.Errorf("environment required. Usage: deploy <environment>")
+func (c *GreetCommand) Execute(args []string) error {
+    name := "world"
+    if len(args) > 0 {
+        name = args[0]
     }
-
-    environment := args[0]
-
-    fmt.Printf("Deploying to %s environment...\n", environment)
-
-    // Your deployment logic here
-
-    fmt.Printf("Successfully deployed to %s!\n", environment)
+    fmt.Printf("Hello, %s!\n", name)
     return nil
 }
 ```
-
-## Integration with Make Commands
-
-Console commands work alongside traditional Make commands:
-
-```bash
-# These are equivalent:
-go run main.go console db:up
-
-# These are equivalent:
-go run main.go console make:model User
-# (No direct make equivalent for code generation)
-```
-
-## Environment Integration
-
-Console commands automatically load your `.env` configuration:
-
-```go
-func (c *MyCommand) Execute(args []string) error {
-    // Environment variables are available
-    dbHost := os.Getenv("DB_HOST")
-    appName := os.Getenv("APP_NAME")
-
-    // Your command logic
-    return nil
-}
-```
-
-## Debugging Commands
-
-Enable verbose output for debugging:
-
-```bash
-# Set debug mode in .env
-APP_DEBUG=true
-
-# Run your command
-go run main.go console my:command
-```
-
-## Performance Tips
-
-1. **Lazy Loading**: Only import packages when needed
-2. **Early Exit**: Validate inputs before heavy operations
-3. **Progress Feedback**: Show progress for long-running commands
-4. **Resource Cleanup**: Always clean up resources in commands
-
----
-
-**Next Steps:**
-- **[Background Tasks](/background-tasks)** - Learn about job processing
-- **[Database](/database)** - Understand database operations
-- **[API Reference](/api-reference)** - Explore API endpoints

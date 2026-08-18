@@ -1,61 +1,40 @@
 # Galaplate
 
-A comprehensive Go-based REST API boilerplate with Fiber, GORM, powerful console commands, background jobs, and task scheduling.
+A Go web framework inspired by Laravel. Built on Fiber and GORM with migrations, background jobs, task scheduling, and a powerful console command system.
+
+## Requirements
+
+- Go 1.24+
+- MySQL 8.0+, PostgreSQL 13+, or SQLite
 
 ## Quick Start
 
 ```bash
-# Clone and setup
-git clone https://github.com/sheenazien8/galaplate.git
+git clone https://github.com/galaplate/galaplate.git
 cd galaplate
-go mod tidy
-
-# Configure
 cp .env.example .env
-# Edit .env with your database settings
-
-# Run migrations and start (using console commands)
+# Edit .env with your database credentials
 go run main.go console db:up
 make dev
-
-# Or use traditional make commands
-# make db-up
-# make dev
-```
-
-## Key Commands
-
-### Console Commands (Recommended)
-```bash
-go run main.go console list              # List all available commands
-go run main.go console db:up             # Run database migrations
-go run main.go console make:model User   # Generate new model
-go run main.go console make:dto UserDto  # Generate new DTO
-```
-
-### Make Commands
-```bash
-make dev          # Development server with hot reload
-make build        # Build application
-make test         # Run tests
 ```
 
 ## Documentation
 
-Complete documentation is available in the [docs/](docs/) directory:
+Full documentation is in the [docs/](docs/) directory:
 
-- [Installation](docs/installation.md)
 - [Quick Start](docs/quick-start.md)
-- [Console Commands](docs/console-commands.md) - **New!** Powerful development tools
+- [Installation](docs/installation.md)
 - [Configuration](docs/configuration.md)
+- [Project Structure](docs/project-structure.md)
+- [Console Commands](docs/console-commands.md)
 - [Database](docs/database.md)
-- [API Reference](docs/api-reference.md)
+- [Routing](docs/routings.md)
+- [Validation & DTOs](docs/validation-and-dto.md)
 - [Background Tasks](docs/background-tasks.md)
-
-## Requirements
-
-- Go 1.22.1+
-- MySQL 8.0+ or PostgreSQL 13+
+- [Policies](docs/policies.md)
+- [File Storage](docs/file-storage.md)
+- [Testing](docs/testing.md)
+- [API Reference](docs/api-reference.md)
 
 ## License
 

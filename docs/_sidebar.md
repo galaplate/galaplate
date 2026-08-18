@@ -4,18 +4,16 @@
   - [Installation](/installation)
   - [Configuration](/configuration)
 
-- **Development**
+- **Core Concepts**
   - [Project Structure](/project-structure)
   - [Console Commands](/console-commands)
   - [Database](/database)
   - [Routing](/routings)
-  - [Policies & Security](/policies)
-  - [DTOs & Validation](/validation-and-dto)
+  - [Validation & DTOs](/validation-and-dto)
   - [Background Tasks](/background-tasks)
+  - [Policies](/policies)
+  - [File Storage](/file-storage)
   - [Testing](/testing)
 
-- **API Reference**
-  - [Endpoints](/api-reference)
-
-- **Deployment**
-  - [Environment Variables](/environment-variables)
+- **Reference**
+  - [API Reference](/api-reference)

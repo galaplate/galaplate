@@ -1,4 +1,3 @@
 - [Home](/)
 - [Quick Start](/quick-start)
-- [API Reference](/api-reference)
 - [GitHub](https://github.com/galaplate/cli)

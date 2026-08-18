@@ -1,125 +1,114 @@
 # Routing
 
-## Overview
+Routes are defined in `router/router.go` using Fiber's API.
 
-Galaplate uses the Fiber framework for high-performance HTTP routing. All routes are defined in `router/router.go` and are organized for clarity, scalability, and maintainability. Routing connects HTTP endpoints to controller methods, applies middleware, and supports grouping for modular APIs.
-
-- **Centralized routing** in `router/router.go`
-- **RESTful conventions** for endpoints
-- **Middleware** for authentication, CORS, etc.
-- **Route groups** for API versioning and organization
-- **Controller integration** for clean separation of logic
-
-## Defining Routes
-
-Routes are registered using Fiber's API:
+## Basic Routes
 
 ```go
-app.Get("/", func(c *fiber.Ctx) error {
-    return c.SendString("Hello world")
-})
+package router
 
-app.Get("/logs", middleware.BasicAuth(), logController.ShowLogsPage)
+import (
+    "github.com/gofiber/fiber/v2"
+    "github.com/galaplate/galaplate/pkg/controllers"
+    "github.com/galaplate/galaplate/pkg/middleware"
+)
+
+func SetupRouter(app *fiber.App) {
+    app.Get("/", func(c *fiber.Ctx) error {
+        return c.SendString("Hello world")
+    })
+}
 ```
 
 ## Route Methods
 
-- `app.Get(path, handler)`
-- `app.Post(path, handler)`
-- `app.Put(path, handler)`
-- `app.Delete(path, handler)`
-- `app.Use(middleware)`
+```go
+app.Get("/users", userController.Index)
+app.Post("/users", userController.Store)
+app.Put("/users/:id", userController.Update)
+app.Delete("/users/:id", userController.Destroy)
+```
+
+## Route Parameters
+
+```go
+func (c *UserController) Show(ctx *fiber.Ctx) error {
+    id := ctx.Params("id")
+    return ctx.JSON(fiber.Map{"id": id})
+}
+```
+
+## Query Parameters
+
+```go
+page := ctx.Query("page", "1")
+search := ctx.Query("search")
+```
 
 ## Route Groups
 
-Group related routes for modularity and versioning:
-
 ```go
 api := app.Group("/api")
-api.Get("/users", userController.GetUsers)
-api.Post("/users", userController.CreateUser)
+api.Get("/users", userController.Index)
+api.Post("/users", userController.Store)
+
+admin := app.Group("/admin")
+admin.Use(middleware.BasicAuth())
+admin.Get("/logs", logController.Index)
 ```
 
 ## Middleware
 
-Apply middleware globally or to specific routes/groups:
+Apply middleware globally, to groups, or to individual routes:
 
 ```go
-app.Use(cors.New()) // Global
-app.Get("/logs", middleware.BasicAuth(), logController.ShowLogsPage) // Route-level
+// Global
+app.Use(cors.New())
+
+// Group
+api := app.Group("/api", middleware.JWTAuth())
+
+// Route
+app.Get("/profile", middleware.JWTAuth(), profileController.Show)
 ```
 
-## Route Parameters and Query
+## Controllers
+
+Controllers are structs with handler methods:
 
 ```go
-// Path parameter
-app.Get("/api/users/:id", userController.GetUserByID)
-
-// Query parameter
-app.Get("/api/search", userController.SearchUsers)
-```
-
-## Controller Integration
-
-Controllers are Go structs with handler methods, placed in `pkg/controllers/`.
-
-```go
-// pkg/controllers/user_controller.go
 package controllers
 
 import "github.com/gofiber/fiber/v2"
 
 type UserController struct{}
 
-func (c *UserController) GetUsers(ctx *fiber.Ctx) error {
-    // Fetch users from DB
+func (c *UserController) Index(ctx *fiber.Ctx) error {
     return ctx.JSON(fiber.Map{
         "success": true,
-        "data": []string{"alice", "bob"},
+        "data":    []string{"alice", "bob"},
     })
 }
 
-func (c *UserController) CreateUser(ctx *fiber.Ctx) error {
-    // Parse and create user
-    return ctx.Status(201).JSON(fiber.Map{
-        "success": true,
-        "message": "User created",
-    })
-}
+var UserControllerInstance = &UserController{}
 ```
 
-Register controllers in `router/router.go`:
+Register in `router/router.go`:
 
 ```go
-var userController = controllers.UserController{}
-app.Get("/api/users", userController.GetUsers)
+var userController = controllers.UserControllerInstance
+app.Get("/api/users", userController.Index)
 ```
 
-## Example: Full Route Setup
+## Error Responses
 
-```go
-func SetupRouter(app *fiber.App) {
-    app.Use(cors.New())
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello world")
-    })
-    app.Get("/logs", middleware.BasicAuth(), logController.ShowLogsPage)
-    api := app.Group("/api")
-    api.Get("/users", userController.GetUsers)
-    api.Post("/users", userController.CreateUser)
+Fiber's default error handler returns JSON. Galaplate bootstraps a custom error handler that returns:
+
+```json
+{
+  "success": false,
+  "message": "error message",
+  "error":   "error message",
+  "status":  500
 }
 ```
-
-## Best Practices
-
-- Use route groups for versioning and organization
-- Apply middleware at the group or route level as needed
-- Keep controller logic in `pkg/controllers/`
-- Use clear, RESTful route naming
-
-## Next Steps
-
-- **[Controllers](/console-commands)** - Learn about generating controllers
-- **[Middleware](/middleware)** - Understand authentication and other middleware
-- **[API Reference](/api-reference)** - See complete API endpoint examples
-- **[Validation & DTOs](/validation-and-dto)** - Add request validation to your routes

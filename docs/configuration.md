@@ -1,78 +1,136 @@
 # Configuration
 
-Galaplate uses environment variables for configuration, making it easy to deploy across different environments while keeping sensitive data secure.
+Galaplate uses YAML configuration files located in the `config/` directory. Environment variables are interpolated at load time.
+
+## Config Files
+
+| File | Purpose |
+|------|---------|
+| `config/app.yaml` | Application name, env, port, key |
+| `config/database.yaml` | Database connections |
+| `config/auth.yaml` | Authentication guards |
+| `config/filesystems.yaml` | File storage drivers |
 
 ## Environment Variables
 
-All configuration is managed through environment variables defined in your `.env` file.
+Galaplate loads `.env` variables into the shell. YAML config files reference them with `${VAR:default}` syntax.
 
-### Application Settings
+### Application
 
-| Variable | Type | Default | Description |
-|----------|------|---------|-------------|
-| `APP_NAME` | string | `Galaplate` | Application name used in logs and UI |
-| `APP_ENV` | string | `local` | Environment: `local`, `staging`, `production` |
-| `APP_DEBUG` | boolean | `true` | Enable debug mode and verbose logging |
-| `APP_URL` | string | `http://localhost` | Base URL for the application |
-| `APP_PORT` | string | `8080` | Port number for the HTTP server |
-| `APP_SECRET` | string | **required** | Secret key for JWT and encryption |
+```yaml
+# config/app.yaml
+name: Galaplate
+env: ${APP_ENV:local}
+debug: ${APP_DEBUG:false}
+port: ${APP_PORT:8080}
+key: ${APP_SECRET}
+```
 
-### Database Configuration
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `APP_ENV` | `local` | Environment name |
+| `APP_DEBUG` | `false` | Enable debug mode |
+| `APP_PORT` | `8080` | HTTP server port |
+| `APP_SECRET` | — | Encryption key (required) |
 
-| Variable | Type | Default | Description |
-|----------|------|---------|-------------|
-| `DB_CONNECTION` | string | `mysql` | Database driver: `mysql` or `postgres` |
-| `DB_HOST` | string | `localhost` | Database server hostname |
-| `DB_PORT` | string | `3306` | Database server port |
-| `DB_DATABASE` | string | **required** | Database name |
-| `DB_USERNAME` | string | **required** | Database username |
-| `DB_PASSWORD` | string | | Database password |
+### Database
+
+```yaml
+# config/database.yaml
+default: ${DB_CONNECTION:sqlite}
+
+connections:
+  sqlite:
+    driver: sqlite
+    database: ${DB_SQLITE_PATH:./storage/database.db}
+
+  mysql:
+    driver: mysql
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:3306}
+    database: ${DB_DATABASE:galaplate}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    pool_size: 10
+    max_idle_connections: 5
+
+  postgres:
+    driver: postgres
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:5432}
+    database: ${DB_DATABASE:galaplate}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+```
 
 ### Authentication
 
-| Variable | Type | Default | Description |
-|----------|------|---------|-------------|
-| `BASIC_AUTH_USERNAME` | string | **required** | Username for admin endpoints |
-| `BASIC_AUTH_PASSWORD` | string | **required** | Password for admin endpoints |
+```yaml
+# config/auth.yaml
+default: jwt
 
-## Environment Files
-
-### `.env` File
-
-Create your `.env` file from the template:
-
-```bash
-cp .env.example .env
+guards:
+  jwt:
+    driver: jwt
+    secret: ${JWT_SECRET:your-secret-key}
+    expiration: ${JWT_EXPIRATION:86400}
+    refresh_expiration: ${JWT_REFRESH_EXPIRATION:604800}
+    algorithm: HS256
 ```
 
-**Example `.env` file:**
-```env
-# Application
-APP_NAME=MyAwesomeAPI
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://localhost
-APP_PORT=8080
-APP_SECRET=super-secret-key-change-this-in-production
+### File Storage
 
-# Database
-DB_CONNECTION=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=my_awesome_api
-DB_USERNAME=root
-DB_PASSWORD=my_secure_password
+```yaml
+# config/filesystems.yaml
+default: ${FILESYSTEM_DRIVER:local}
+max_size: ${FILESYSTEM_MAX_SIZE:10485760}
 
-# Authentication
-BASIC_AUTH_USERNAME=admin
-BASIC_AUTH_PASSWORD=secure_admin_password
+allowed_types:
+  - image/jpeg
+  - image/png
+  - application/pdf
+
+disks:
+  local:
+    driver: local
+    path: ${FILESYSTEM_LOCAL_PATH:storage/app/uploads}
+
+  s3:
+    driver: s3
+    region: ${AWS_REGION:}
+    bucket: ${AWS_BUCKET:}
+    key: ${AWS_ACCESS_KEY_ID:}
+    secret: ${AWS_SECRET_ACCESS_KEY:}
 ```
 
----
+## Reading Config in Code
 
-## Next Steps
+```go
+import "github.com/galaplate/core/config"
 
-- **[Database](/database)** - Configure database connections
-- **[Console Commands](/console-commands)** - Learn about code generation
-- **[Project Structure](/project-structure)** - Understand the codebase
-- **[Quick Start](/quick-start)** - Get your application running
+// Dot notation
+name := config.ConfigString("app.name")
+port := config.ConfigInt("app.port")
+debug := config.ConfigBool("app.debug")
+
+// Database config
+host := config.ConfigString("database.connections.mysql.host")
+```
+
+## Custom Config Files
+
+Add new YAML files to `config/`. They are automatically loaded and available via dot notation:
+
+```yaml
+# config/mail.yaml
+default: smtp
+
+drivers:
+  smtp:
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:587}
+```
+
+```go
+host := config.ConfigString("mail.drivers.smtp.host")
+```

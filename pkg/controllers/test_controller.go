@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/galaplate/core/supports"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type TestController struct{}
@@ -12,7 +12,7 @@ type CreateTestRequest struct {
 	Description string `json:"description"`
 }
 
-func (s *CreateTestRequest) Validate(c *fiber.Ctx) (u *CreateTestRequest, err error) {
+func (s *CreateTestRequest) Validate(c fiber.Ctx) (u *CreateTestRequest, err error) {
 	if err = supports.NewValidator(c).Validate(s); err != nil {
 		return nil, err
 	}
@@ -25,14 +25,14 @@ func NewTestController() *TestController {
 	return &TestController{}
 }
 
-func (tc *TestController) GetHealthCheck(c *fiber.Ctx) error {
+func (tc *TestController) GetHealthCheck(c fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"status":  "ok",
 		"message": "API is working",
 	})
 }
 
-func (tc *TestController) CreateTestData(c *fiber.Ctx) error {
+func (tc *TestController) CreateTestData(c fiber.Ctx) error {
 	req, err := new(CreateTestRequest).Validate(c)
 	if err != nil {
 		return err
@@ -49,7 +49,7 @@ func (tc *TestController) CreateTestData(c *fiber.Ctx) error {
 	})
 }
 
-func (tc *TestController) GetTestData(c *fiber.Ctx) error {
+func (tc *TestController) GetTestData(c fiber.Ctx) error {
 	id := c.Params("id")
 
 	return c.JSON(fiber.Map{

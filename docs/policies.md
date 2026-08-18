@@ -18,7 +18,7 @@ package policies
 import (
     "context"
     "github.com/galaplate/core/policies"
-    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/fiber/v3"
 )
 
 type AdminOnlyPolicy struct{}

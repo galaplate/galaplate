@@ -48,7 +48,7 @@ disks:
 import filestorage "github.com/galaplate/core/file-storage"
 import "github.com/galaplate/core/file-storage/factory"
 
-func (c *Controller) Upload(ctx *fiber.Ctx) error {
+func (c *Controller) Upload(ctx fiber.Ctx) error {
     file, err := ctx.FormFile("document")
     if err != nil {
         return err

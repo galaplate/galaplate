@@ -3,15 +3,15 @@ package router
 import (
 	"github.com/galaplate/galaplate/pkg/controllers"
 	"github.com/galaplate/galaplate/pkg/middleware"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 func SetupRouter(app *fiber.App) {
 
 	app.Use(cors.New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Hello world")
 	})
 
@@ -37,7 +37,7 @@ func SetupRouter(app *fiber.App) {
 	api.Get("/test/:id", testController.GetTestData)
 
 	// Protected routes (require JWT authentication)
-	api.Get("/profile", middleware.JWTAuth(), func(c *fiber.Ctx) error {
+	api.Get("/profile", middleware.JWTAuth(), func(c fiber.Ctx) error {
 		user := c.Locals("user")
 		return c.JSON(fiber.Map{
 			"success": true,

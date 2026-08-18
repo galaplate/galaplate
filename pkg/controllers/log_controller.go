@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type LogController struct{}
@@ -48,7 +48,7 @@ type LogEntryWithJSON struct {
 	AdditionalInfoJSON string         `json:"-"`
 }
 
-func (lvc *LogController) Export(c *fiber.Ctx) error {
+func (lvc *LogController) Export(c fiber.Ctx) error {
 	logDir := "./storage/logs"
 
 	logFiles, err := getLogFiles(logDir)
@@ -117,7 +117,7 @@ func (lvc *LogController) Export(c *fiber.Ctx) error {
 	return c.Status(400).SendString("Invalid export format. Use 'json' or 'csv'")
 }
 
-func (lvc *LogController) CleanupLogs(c *fiber.Ctx) error {
+func (lvc *LogController) CleanupLogs(c fiber.Ctx) error {
 	logDir := "./storage/logs"
 	daysStr := c.Query("days", "30")
 	days := 30
@@ -169,7 +169,7 @@ func (lvc *LogController) CleanupLogs(c *fiber.Ctx) error {
 	})
 }
 
-func (lvc *LogController) GetLogStats(c *fiber.Ctx) error {
+func (lvc *LogController) GetLogStats(c fiber.Ctx) error {
 	logDir := "./storage/logs"
 
 	var totalFiles int
@@ -221,7 +221,7 @@ func (lvc *LogController) GetLogStats(c *fiber.Ctx) error {
 	})
 }
 
-func (lvc *LogController) Index(c *fiber.Ctx) error {
+func (lvc *LogController) Index(c fiber.Ctx) error {
 	logDir := "./storage/logs"
 
 	logFiles, err := getLogFiles(logDir)

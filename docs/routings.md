@@ -8,13 +8,13 @@ Routes are defined in `router/router.go` using Fiber's API.
 package router
 
 import (
-    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/fiber/v3"
     "github.com/galaplate/galaplate/pkg/controllers"
     "github.com/galaplate/galaplate/pkg/middleware"
 )
 
 func SetupRouter(app *fiber.App) {
-    app.Get("/", func(c *fiber.Ctx) error {
+    app.Get("/", func(c fiber.Ctx) error {
         return c.SendString("Hello world")
     })
 }
@@ -32,7 +32,7 @@ app.Delete("/users/:id", userController.Destroy)
 ## Route Parameters
 
 ```go
-func (c *UserController) Show(ctx *fiber.Ctx) error {
+func (c *UserController) Show(ctx fiber.Ctx) error {
     id := ctx.Params("id")
     return ctx.JSON(fiber.Map{"id": id})
 }
@@ -79,11 +79,11 @@ Controllers are structs with handler methods:
 ```go
 package controllers
 
-import "github.com/gofiber/fiber/v2"
+import "github.com/gofiber/fiber/v3"
 
 type UserController struct{}
 
-func (c *UserController) Index(ctx *fiber.Ctx) error {
+func (c *UserController) Index(ctx fiber.Ctx) error {
     return ctx.JSON(fiber.Map{
         "success": true,
         "data":    []string{"alice", "bob"},

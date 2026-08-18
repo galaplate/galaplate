@@ -8,14 +8,14 @@ import (
 
 	config "github.com/galaplate/core/env"
 	"github.com/galaplate/core/logger"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type AuthMiddleware struct {
 }
 
 func (m *AuthMiddleware) BasicAuth() fiber.Handler {
-	return func(c *fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		var auth = c.Get("Authorization")
 		if auth == "" {
 			c.Set("WWW-Authenticate", `Basic realm="Restricted"`)

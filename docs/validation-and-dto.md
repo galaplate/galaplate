@@ -17,7 +17,7 @@ package dto
 
 import (
     "github.com/galaplate/core/supports"
-    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/fiber/v3"
 )
 
 type CreateUserRequest struct {
@@ -26,7 +26,7 @@ type CreateUserRequest struct {
     Password string `json:"password" validate:"required,min=6"`
 }
 
-func (s *CreateUserRequest) Validate(c *fiber.Ctx) (*CreateUserRequest, error) {
+func (s *CreateUserRequest) Validate(c fiber.Ctx) (*CreateUserRequest, error) {
     if err := supports.NewValidator(c).Validate(s); err != nil {
         return nil, err
     }
@@ -37,7 +37,7 @@ func (s *CreateUserRequest) Validate(c *fiber.Ctx) (*CreateUserRequest, error) {
 ## Validation in Controllers
 
 ```go
-func (c *UserController) Store(ctx *fiber.Ctx) error {
+func (c *UserController) Store(ctx fiber.Ctx) error {
     req, err := new(dto.CreateUserRequest).Validate(ctx)
     if err != nil {
         return err // Returns 422 with validation errors

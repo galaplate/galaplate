@@ -9,7 +9,7 @@ import (
 	"github.com/galaplate/galaplate/pkg/dto"
 	"github.com/galaplate/galaplate/pkg/middleware"
 	"github.com/galaplate/galaplate/pkg/models"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +24,7 @@ func NewAuthController() *AuthController {
 	return &AuthController{}
 }
 
-func (ac *AuthController) Register(c *fiber.Ctx) error {
+func (ac *AuthController) Register(c fiber.Ctx) error {
 	req, err := new(dto.AuthRegisterRequest).Validate(c)
 	if err != nil {
 		return err
@@ -94,7 +94,7 @@ func (ac *AuthController) Register(c *fiber.Ctx) error {
 	})
 }
 
-func (ac *AuthController) Login(c *fiber.Ctx) error {
+func (ac *AuthController) Login(c fiber.Ctx) error {
 	req, err := new(dto.AuthLoginRequest).Validate(c)
 	if err != nil {
 		return err

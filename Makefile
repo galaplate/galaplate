@@ -39,7 +39,7 @@ test:
 # Run tests with coverage
 test-coverage:
 	@echo "📊 Running tests with coverage..."
-	go test -mod=mod -coverprofile=coverage.out ./...
+	go test -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
 
 # Run tests in the tests directory only

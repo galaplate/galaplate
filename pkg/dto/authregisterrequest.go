@@ -1,8 +1,8 @@
 package dto
 
 import (
-	"github.com/galaplate/core/supports"
 	"github.com/galaplate/core/fiber"
+	"github.com/galaplate/core/supports"
 )
 
 // AuthRegisterRequest - Generated on 2025-09-06 06:23:44

@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/galaplate/core/supports"
 	"github.com/galaplate/core/fiber"
+	"github.com/galaplate/core/supports"
 )
 
 type TestController struct{}

@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	config "github.com/galaplate/core/env"
-	"github.com/galaplate/core/logger"
 	"github.com/galaplate/core/fiber"
+	"github.com/galaplate/core/logger"
 )
 
 type AuthMiddleware struct {

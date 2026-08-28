@@ -30,7 +30,7 @@ func (ac *AuthController) Register(c fiber.Ctx) error {
 		return err
 	}
 
-	db := database.Connect
+	db := database.Connect.WithContext(c.Context())
 
 	// Check if user with email already exists
 	var existingUser models.User
@@ -100,7 +100,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 		return err
 	}
 
-	db := database.Connect
+	db := database.Connect.WithContext(c.Context())
 
 	// Find user by email
 	var user models.User

@@ -73,8 +73,8 @@ func (j *JWTService) getJWTSecret() string {
 }
 
 func (j *JWTService) AuthMiddleware() fiber.Handler {
-	db := database.Connect
 	return func(c fiber.Ctx) error {
+		db := database.Connect.WithContext(c.Context())
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{

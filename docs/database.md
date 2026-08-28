@@ -16,6 +16,28 @@ import "github.com/galaplate/core/database"
 database.Connect.Find(&users)
 ```
 
+### Context-Aware Queries
+
+In HTTP controllers and middleware, pass the request context to DB calls so queries respect cancellation and timeouts:
+
+```go
+func (c *UserController) Index(ctx fiber.Ctx) error {
+    db := database.Connect.WithContext(ctx.Context())
+    db.Find(&users)
+    return ctx.JSON(users)
+}
+```
+
+In background jobs and schedulers, use the context provided by the worker:
+
+```go
+func (j SendEmail) Handle(ctx context.Context, payload json.RawMessage) error {
+    db := database.Connect.WithContext(ctx)
+    db.Find(&users)
+    return nil
+}
+```
+
 ## Migrations
 
 Migrations are Go files that use a Blueprint schema builder.

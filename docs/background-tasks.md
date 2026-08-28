@@ -16,6 +16,7 @@ This creates `pkg/jobs/send_email.go`:
 package jobs
 
 import (
+    "context"
     "encoding/json"
     "time"
     "github.com/galaplate/core/queue"
@@ -27,8 +28,8 @@ func (j SendEmail) Type() string {
     return "send_email"
 }
 
-func (j SendEmail) Handle(payload json.RawMessage) error {
-    // Job logic here
+func (j SendEmail) Handle(ctx context.Context, payload json.RawMessage) error {
+    // Job logic here — ctx carries cancellation signals from the queue worker
     return nil
 }
 
@@ -97,18 +98,36 @@ This creates `pkg/scheduler/daily_cleanup.go`:
 ```go
 package scheduler
 
-import "github.com/galaplate/core/scheduler"
+import (
+    "context"
+    "github.com/galaplate/core/scheduler"
+)
 
 type DailyCleanup struct{}
 
-func (c DailyCleanup) Handle() (string, func()) {
-    return "0 0 * * *", func() {
-        // Cleanup logic
+func (c DailyCleanup) Handle() (string, func(context.Context)) {
+    return "0 0 * * *", func(ctx context.Context) {
+        // Cleanup logic — ctx carries the scheduler lifecycle
     }
 }
 
 func init() {
     scheduler.RegisterScheduler("daily_cleanup", DailyCleanup{})
+}
+```
+
+## Context Propagation
+
+Queue jobs and scheduler tasks receive a `context.Context` that carries cancellation signals from the application lifecycle.
+
+Use `ctx` to make cancellable database queries or HTTP requests:
+
+```go
+func (j SendEmail) Handle(ctx context.Context, payload json.RawMessage) error {
+    db := database.Connect.WithContext(ctx)
+    // queries will be cancelled if the worker shuts down
+    db.Find(&users)
+    return nil
 }
 ```
 

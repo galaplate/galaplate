@@ -3,10 +3,9 @@ module github.com/galaplate/galaplate
 go 1.25.0
 
 require (
-	github.com/galaplate/core v0.0.40
+	github.com/galaplate/core v0.0.42
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/stretchr/testify v1.12.0
-	gorm.io/gorm v1.31.2
 )
 
 require (
@@ -86,4 +85,5 @@ require (
 	gorm.io/driver/mysql v1.6.0 // indirect
 	gorm.io/driver/postgres v1.6.2 // indirect
 	gorm.io/driver/sqlite v1.6.0 // indirect
+	gorm.io/gorm v1.31.2 // indirect
 )

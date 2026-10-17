@@ -10,7 +10,6 @@ import (
 	"github.com/galaplate/galaplate/pkg/dto"
 	"github.com/galaplate/galaplate/pkg/middleware"
 	"github.com/galaplate/galaplate/pkg/models"
-	"gorm.io/gorm"
 )
 
 type AuthController struct{}
@@ -105,7 +104,7 @@ func (ac *AuthController) Login(c fiber.Ctx) error {
 	// Find user by email
 	var user models.User
 	if err := db.Where("email = ?", req.Email).First(&user).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, database.ErrRecordNotFound) {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,
 				"message": "Invalid credentials",

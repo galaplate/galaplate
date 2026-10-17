@@ -126,6 +126,37 @@ Tests load `.env.testing` by default. The `TestCase` automatically:
 - Boots the Fiber app with routes
 - Provides a database connection
 
+## Config Mocking
+
+Mock configuration values at runtime for testing different scenarios:
+
+```go
+func (s *UserControllerSuite) TestDebugMode() {
+    s.MockConfig("app.debug", true)
+    s.MockConfig("database.default", "sqlite")
+    
+    // tests run with mocked values
+}
+```
+
+Mock multiple values at once:
+
+```go
+func (s *UserControllerSuite) TestMultipleConfigs() {
+    s.MockConfigMap(map[string]any{
+        "app.debug":     true,
+        "app.locale":    "en",
+        "cache.driver":  "array",
+    })
+}
+```
+
+Config mocking uses dot notation for nested keys:
+- `"app.debug"` → `app.debug`
+- `"database.connections.mysql.host"` → `database.connections.mysql.host`
+
+Mocked values are automatically reset after each test.
+
 ## Custom Bootstrap
 
 Override bootstrap settings per test:

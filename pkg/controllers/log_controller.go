@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/galaplate/core/fiber"
+	"github.com/galaplate/core/timezone"
 )
 
 type LogController struct{}
@@ -76,7 +77,7 @@ func (lvc *LogController) Export(c fiber.Ctx) error {
 		c.Set("Content-Type", "application/json")
 		c.Set("Content-Disposition", `attachment; filename="logs-export.json"`)
 		return c.JSON(fiber.Map{
-			"exported_at": time.Now().Format(time.RFC3339),
+			"exported_at": timezone.Now().Format(time.RFC3339),
 			"file":        currentFile,
 			"total_logs":  len(filteredLogs),
 			"logs":        filteredLogs,
@@ -125,7 +126,7 @@ func (lvc *LogController) CleanupLogs(c fiber.Ctx) error {
 		days = d
 	}
 
-	cutoffDate := time.Now().AddDate(0, 0, -days)
+	cutoffDate := timezone.Now().AddDate(0, 0, -days)
 	var deletedCount int
 	var totalSize int64
 

@@ -24,6 +24,7 @@ env: ${APP_ENV:local}
 debug: ${APP_DEBUG:false}
 port: ${APP_PORT:8080}
 key: ${APP_SECRET}
+timezone: ${APP_TIMEZONE:UTC}
 ```
 
 | Variable | Default | Description |
@@ -32,6 +33,12 @@ key: ${APP_SECRET}
 | `APP_DEBUG` | `false` | Enable debug mode |
 | `APP_PORT` | `8080` | HTTP server port |
 | `APP_SECRET` | — | Encryption key (required) |
+| `APP_TIMEZONE` | `UTC` | IANA timezone for all app timestamps |
+
+`APP_TIMEZONE` is the single app clock. Core's `timezone` package resolves
+`app.timezone` config → `APP_TIMEZONE` env → UTC, and wires it into GORM's
+`NowFunc`, the database timestamp codecs, cron, queue, logger and migrator.
+App code writes timestamps with `timezone.Now()`, never `time.Now()`.
 
 ### Database
 

@@ -7,3 +7,11 @@ port: ${APP_PORT:8080}
 
 # Application key for encryption
 key: ${APP_SECRET}
+
+# Application timezone (IANA name). Resolved by core's timezone package:
+# app.timezone config key -> APP_TIMEZONE env -> UTC. GORM's NowFunc and the
+# database drivers read this, so every timestamp uses one clock.
+timezone: ${APP_TIMEZONE:UTC}
+
+# Also write logs to stdout (useful for `make dev`/`make watch` so logs show directly in the terminal)
+log_stdout: ${LOG_STDOUT:false}

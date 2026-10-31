@@ -8,7 +8,7 @@ galaplate/
 │   ├── auth.yaml
 │   └── filesystems.yaml
 ├── console/
-│   └── kernel.go          # Custom console command registration
+│   └── commands/          # Custom console commands
 ├── db/
 │   ├── migrations/        # Go-based migration files
 │   └── seeders/           # Database seeders
@@ -21,6 +21,7 @@ galaplate/
 │   ├── models/            # GORM models
 │   ├── policies/          # Authorization policies
 │   └── scheduler/         # Cron task handlers
+├── providers/             # Service providers (routes, commands, middleware aliases)
 ├── router/
 │   └── router.go          # Route definitions
 ├── storage/
@@ -36,16 +37,14 @@ galaplate/
 
 ## Entry Point
 
-`main.go` bootstraps the application:
+`main.go` bootstraps the application. Routes and console commands are registered by the service providers in `providers/`, which `main.go` loads with a blank import (`_ "github.com/galaplate/galaplate/providers"`). See [Service Providers](providers.md).
 
 ```go
 func main() {
-    app := bootstrap.NewApp(withSetupRoutes)
+    app := bootstrap.NewApp()
 
     if len(os.Args) > 1 && os.Args[1] == "console" {
-        // Run console commands
         kernel := console.NewKernel()
-        pkgConsole.RegisterCommands(kernel)
         kernel.Run(os.Args)
         return
     }
@@ -61,6 +60,8 @@ func main() {
 | Task | Location |
 |------|----------|
 | Add a route | `router/router.go` |
+| Register a console command | `providers/console_service_provider.go` |
+| Add a service provider | `providers/` |
 | Add a controller | `pkg/controllers/` |
 | Add a model | `pkg/models/` |
 | Add a migration | `db/migrations/` |

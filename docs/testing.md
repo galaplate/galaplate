@@ -165,7 +165,6 @@ Override bootstrap settings per test:
 func (s *UserControllerSuite) SetupTest() {
     s.Config = tests.DefaultTestConfig()
     s.Config.RefreshDatabase = true
-    s.Config.SetupRoutes = router.SetupRouter
     s.TestCase.SetupTest()
 }
 ```

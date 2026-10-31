@@ -51,12 +51,13 @@ Galaplate features a powerful console command system for development tasks:
 ## 4. Project Structure
 - App code is under `cmd/`, `pkg/`, `domains/`, `router/`
 - DB/migrations/seed in `db/`, support utility code in `pkg/supports/`
-- Console commands in `pkg/console/commands/`
+- Console commands in `console/commands/`
+- Service providers in `providers/` (routes, commands, middleware aliases)
 
 ## 5. Custom Command Development
 To create new console commands:
-1. Create command file in `pkg/console/commands/`
+1. Create command file in `console/commands/`
 2. Implement `Command` interface with `GetSignature()`, `GetDescription()`, `Execute(args []string) error`
-3. Register in `pkg/console/commands.go` via `RegisterCommands()`
+3. Return it from `Commands()` in `providers/console_service_provider.go`
 
 No Cursor or Copilot rules present. If new lint, type, or style guidelines are added, update this file accordingly.

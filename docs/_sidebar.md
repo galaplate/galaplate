@@ -6,6 +6,7 @@
 
 - **Core Concepts**
   - [Project Structure](/project-structure)
+  - [Service Providers](/providers)
   - [Console Commands](/console-commands)
   - [Database](/database)
   - [Routing](/routings)

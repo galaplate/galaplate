@@ -34,15 +34,13 @@ go run main.go console <command> [arguments]
 
 ## Custom Commands
 
-Register custom commands in `console/kernel.go`:
+Register custom commands in `providers/console_service_provider.go`:
 
 ```go
-package console
-
-import "github.com/galaplate/core/console"
-
-func RegisterCommands(kernel *console.Kernel) {
-    kernel.Register(&MyCustomCommand{})
+func (p *ConsoleServiceProvider) Commands() []provider.Command {
+    return []provider.Command{
+        &commands.MyCustomCommand{},
+    }
 }
 ```
 

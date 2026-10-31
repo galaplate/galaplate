@@ -3,7 +3,7 @@ package tests
 import (
 	coretesting "github.com/galaplate/core/testing"
 	_ "github.com/galaplate/galaplate/db/migrations"
-	"github.com/galaplate/galaplate/router"
+	_ "github.com/galaplate/galaplate/providers"
 )
 
 type TestCase struct {
@@ -12,7 +12,6 @@ type TestCase struct {
 
 func (tc *TestCase) SetupSuite() {
 	tc.Config = coretesting.DefaultTestConfig()
-	tc.Config.SetupRoutes = router.SetupRouter
 }
 
 type WithRefreshDatabase struct {
@@ -21,7 +20,6 @@ type WithRefreshDatabase struct {
 
 func (w *WithRefreshDatabase) SetupSuite() {
 	w.Config = coretesting.DefaultTestConfig()
-	w.Config.SetupRoutes = router.SetupRouter
 	w.Config.RefreshDatabase = true
 }
 
@@ -31,6 +29,5 @@ type RefreshDatabaseBeforeEachTest struct {
 
 func (r *RefreshDatabaseBeforeEachTest) SetupSuite() {
 	r.Config = coretesting.DefaultTestConfig()
-	r.Config.SetupRoutes = router.SetupRouter
 	r.Config.RefreshDatabase = true
 }

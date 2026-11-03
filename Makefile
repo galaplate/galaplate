@@ -3,8 +3,20 @@
 # Default target
 .DEFAULT_GOAL := help
 
+# Check for forbidden direct gorm imports in boilerplate code
+# GORM should only be imported in core; boilerplate should use core/database aliases.
+check-gorm:
+	@found=$$(grep -rn 'gorm\.io/gorm' --include="*.go" . | grep -v '/vendor/' || true); \
+	if [ -n "$$found" ]; then \
+		echo "❌ Forbidden: direct gorm import detected in boilerplate code:"; \
+		echo "$$found"; \
+		echo ""; \
+		echo "Use github.com/galaplate/core/database instead (database.DeletedAt, database.ErrRecordNotFound)."; \
+		exit 1; \
+	fi
+
 # Build the application
-build:
+build: check-gorm
 	@echo "🔨 Building application..."
 	go build -o server main.go
 
@@ -14,6 +26,7 @@ run: build
 	./server
 
 # Watch for changes and auto-reload (requires reflex: go install github.com/cespare/reflex@latest)
+watch: export LOG_STDOUT=true
 watch:
 	@echo "👀 Watching for changes..."
 	reflex -s -r '\.go$$' make run
@@ -32,7 +45,7 @@ fmt:
 	go fmt ./...
 
 # Run tests
-test:
+test: check-gorm
 	@echo "🧪 Running tests..."
 	go test ./tests/...
 
@@ -70,47 +83,28 @@ help:
 	@echo "  tidy                        Tidy go modules"
 	@echo ""
 	@echo "🖥️  Console System:"
-	@echo "  console                     Show console command help"
+	@echo "  console <cmd> [args]        Build once, then run a console command (e.g. make console db:up)"
 	@echo ""
 	@echo "💡 Examples:"
 	@echo "  make dev                    # Start development server"
 	@echo "  make test-coverage          # Run tests with coverage"
-	@echo "  go run main.go console list          # List all console commands"
-	@echo "  go run main.go console make:model User   # Create User model"
-	@echo "  go run main.go console db:create         # Create migration"
-	@echo "  go run main.go console db:up             # Run migrations"
+	@echo "  make console                # List all console commands"
+	@echo "  make console make:model User   # Create User model"
+	@echo "  make console db:create         # Create migration"
+	@echo "  make console db:up             # Run migrations"
 
-# Console command runner
-.PHONY: console
-console:
-	@echo "🖥️  Galaplate Console System"
-	@echo ""
-	@echo "All database and code generation commands have been migrated to Go!"
-	@echo ""
-	@echo "📋 Quick commands:"
-	@echo "  go run main.go console list              # List all available commands"
-	@echo ""
-	@echo "🗄️  Database management:"
-	@echo "  go run main.go console db:create         # Create migration"
-	@echo "  go run main.go console db:up             # Run migrations"
-	@echo "  go run main.go console db:down           # Rollback migration"
-	@echo "  go run main.go console db:status         # Migration status"
-	@echo "  go run main.go console db:seed           # Run seeders"
-	@echo ""
-	@echo "🏗️  Code generation:"
-	@echo "  go run main.go console make:model User   # Create model"
-	@echo "  go run main.go console make:dto UserDTO  # Create DTO"
-	@echo "  go run main.go console make:job EmailJob # Create job"
-	@echo "  go run main.go console make:cron Daily   # Create cron"
-	@echo ""
-	@echo "💡 For complete list: go run main.go console list"
+# Console command runner: builds ./server once (incremental), then runs the
+# binary instead of `go run`, which relinks the whole app on every call.
+#   make console                      # list commands
+#   make console db:up
+#   make console make:model User
+#   make console ARGS="db:seed --force"   # use ARGS for flags make would eat
+ifeq (console,$(firstword $(MAKECMDGOALS)))
+  CONSOLE_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  # Turn the extra words into no-op targets so make doesn't try to build them.
+  $(eval $(subst :,\:,$(CONSOLE_ARGS)):;@:)
+endif
 
-# Prevent make from trying to build console command arguments as targets
-list:
-	@:
-
-make\:model make\:dto make\:job make\:cron make\:seeder make\:command:
-	@:
-
-example\:demo:
-	@:
+.PHONY: console check-gorm
+console: build
+	@./server console $(CONSOLE_ARGS) $(ARGS)

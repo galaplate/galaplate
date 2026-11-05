@@ -8,6 +8,19 @@ Galaplate includes a console command system for code generation and database man
 go run main.go console <command> [arguments]
 ```
 
+Or through the Makefile, which builds once and reuses the binary:
+
+```bash
+make console <command> [arguments]
+```
+
+GNU make treats any `--flag` on its command line as its own option, so put `--` before `console` (or pass the flags in `ARGS`) when a command takes flags:
+
+```bash
+make -- console make:provider Billing --routes --commands
+make console make:provider Billing ARGS="--routes --commands"
+```
+
 ## Database Commands
 
 | Command | Description |

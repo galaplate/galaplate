@@ -80,6 +80,7 @@ help:
 	@echo "  make console make:model User   # Create User model"
 	@echo "  make console db:create         # Create migration"
 	@echo "  make console db:up             # Run migrations"
+	@echo "  make -- console make:provider Billing --routes   # Use -- when passing --flags"
 
 # Console command runner: builds ./server once (incremental), then runs the
 # binary instead of `go run`, which relinks the whole app on every call.
@@ -87,6 +88,7 @@ help:
 #   make console db:up
 #   make console make:model User
 #   make console ARGS="db:seed --force"   # use ARGS for flags make would eat
+#   make -- console db:seed --force       # or put -- before console
 ifeq (console,$(firstword $(MAKECMDGOALS)))
   CONSOLE_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
   # Turn the extra words into no-op targets so make doesn't try to build them.

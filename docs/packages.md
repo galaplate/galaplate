@@ -62,7 +62,7 @@ galaplate-blog/                  # module github.com/acme/galaplate-blog
 ├── go.mod                       # requires github.com/galaplate/core
 ├── provider.go                  # the only public entry point
 ├── provider_test.go             # boots the provider and hits its routes
-├── Makefile                     # test, fmt, check-gorm
+├── Makefile                     # test, fmt
 ├── README.md                    # install steps, routes, commands, aliases
 └── internal/
     ├── commands/
@@ -207,7 +207,7 @@ func (p *AppServiceProvider) Register() {
 
 ## Database Access
 
-Packages follow the same rule as applications: go through `github.com/galaplate/core/database` and never import `gorm.io/gorm` directly. The application's `make check-gorm` only scans the application's own files, so add the same check to your package's Makefile if you want it enforced.
+Like applications, packages use the shared connection from `github.com/galaplate/core/database`:
 
 ```go
 func (c *PostController) Index(ctx fiber.Ctx) error {
@@ -298,5 +298,4 @@ To test against a real database, install the package into an application and wri
 - [ ] Implementation is under `internal/`; `provider.go` is the only public package
 - [ ] Commands, migrations, tables, job types and policy names are prefixed with the package name
 - [ ] `provider.Middleware` is only called from `Routes()` or `Boot()`
-- [ ] No direct `gorm.io/gorm` imports
 - [ ] README lists the middleware aliases and config keys the package uses

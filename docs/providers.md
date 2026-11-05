@@ -80,7 +80,7 @@ A package then uses `provider.Middleware("auth")`. A missing alias panics at sta
 A provider can live in its own Go module. Keep the implementation under `internal/` so only the provider is importable, and install it with a blank import:
 
 ```go
-import _ "github.com/acme/galaplate-billing"
+import _ "github.com/acme/billing"
 ```
 
 Its routes and commands are registered without touching `router/router.go` or `main.go`. See [Creating a Package](/packages) for the full guide.

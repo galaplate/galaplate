@@ -10,22 +10,22 @@ From your application, scaffold a package and link it in one step:
 go run main.go console make:package blog --link
 ```
 
-This creates `../galaplate-blog` (module `github.com/<you>/galaplate-blog`, derived from your app's module path) with a working provider, an example route (`GET /api/blog/ping`), an example command (`blog:hello`), a migrations package, a provider test, a `Makefile` and a `README.md`. With `--link` it also:
+This creates `../blog` (module `github.com/<you>/blog`, derived from your app's module path) with a working provider, an example route (`GET /api/blog/ping`), an example command (`blog:hello`), a migrations package, a provider test, a `Makefile` and a `README.md`. With `--link` it also:
 
 - adds `require` and `replace` directives for the package to your app's `go.mod`
-- adds `_ "github.com/<you>/galaplate-blog"` to `providers/packages.go` (created if missing)
+- adds `_ "github.com/<you>/blog"` to `providers/packages.go` (created if missing)
 
 Then:
 
 ```bash
-cd ../galaplate-blog && go mod tidy && make test
+cd ../blog && go mod tidy && make test
 cd - && go run main.go console blog:hello
 ```
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--module <path>` | sibling of the app's module, e.g. `github.com/acme/galaplate-blog` | Go module path |
-| `--dir <path>` | `../galaplate-<name>` | Where to create the package; must be empty or missing |
+| `--module <path>` | sibling of the app's module, e.g. `github.com/acme/blog` | Go module path |
+| `--dir <path>` | `../<name>` | Where to create the package; must be empty or missing |
 | `--link` | off (asked in interactive mode) | Wire the package into the current app for local development |
 
 Run it without arguments to be prompted for each value. The package's `go.mod` requires the same `github.com/galaplate/core` version and `go` directive as your application.
@@ -58,7 +58,7 @@ The boot order is:
 `make:package blog` generates:
 
 ```
-galaplate-blog/                  # module github.com/acme/galaplate-blog
+blog/                            # module github.com/acme/blog
 ├── go.mod                       # requires github.com/galaplate/core
 ├── provider.go                  # the only public entry point
 ├── provider_test.go             # boots the provider and hits its routes
@@ -88,9 +88,9 @@ package blog
 import (
 	"github.com/galaplate/core/fiber"
 	"github.com/galaplate/core/provider"
-	"github.com/acme/galaplate-blog/internal/commands"
-	"github.com/acme/galaplate-blog/internal/controllers"
-	_ "github.com/acme/galaplate-blog/internal/migrations"
+	"github.com/acme/blog/internal/commands"
+	"github.com/acme/blog/internal/controllers"
+	_ "github.com/acme/blog/internal/migrations"
 )
 
 type BlogServiceProvider struct{}
@@ -237,7 +237,7 @@ The application can then add a `config/blog.yaml` to override them.
 `make:package --link` does this for a package you are developing locally. For a published package, in the application:
 
 ```bash
-go get github.com/acme/galaplate-blog
+go get github.com/acme/blog
 ```
 
 Then add a blank import. The simplest place is a file in `providers/`, which both `main.go` and `tests/test_case.go` already import, so the package is loaded for the server, the console and the tests:
@@ -247,7 +247,7 @@ Then add a blank import. The simplest place is a file in `providers/`, which bot
 package providers
 
 import (
-	_ "github.com/acme/galaplate-blog"
+	_ "github.com/acme/blog"
 )
 ```
 
@@ -266,7 +266,7 @@ go run main.go console db:up
 
 ```
 // galaplate/go.mod
-replace github.com/acme/galaplate-blog => ../galaplate-blog
+replace github.com/acme/blog => ../blog
 ```
 
 Changes to the package are then picked up on the next build. Remove the `replace` before you release the application.

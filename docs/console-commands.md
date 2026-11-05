@@ -31,6 +31,8 @@ go run main.go console <command> [arguments]
 | `make:seeder <Name>` | Generate a seeder | `db/seeders/name.go` |
 | `make:factory <Name>` | Generate a model factory | `db/factories/name.go` |
 | `make:policy <Name>` | Generate a policy | `pkg/policies/name.go` |
+| `make:provider <Name> [--routes] [--commands]` | Generate a [service provider](/providers) | `providers/name_service_provider.go` |
+| `make:package <name> [--module] [--dir] [--link]` | Scaffold a reusable [package](/packages) | `../galaplate-name/` |
 
 ## Custom Commands
 

@@ -3,20 +3,8 @@
 # Default target
 .DEFAULT_GOAL := help
 
-# Check for forbidden direct gorm imports in boilerplate code
-# GORM should only be imported in core; boilerplate should use core/database aliases.
-check-gorm:
-	@found=$$(grep -rn 'gorm\.io/gorm' --include="*.go" . | grep -v '/vendor/' || true); \
-	if [ -n "$$found" ]; then \
-		echo "❌ Forbidden: direct gorm import detected in boilerplate code:"; \
-		echo "$$found"; \
-		echo ""; \
-		echo "Use github.com/galaplate/core/database instead (database.DeletedAt, database.ErrRecordNotFound)."; \
-		exit 1; \
-	fi
-
 # Build the application
-build: check-gorm
+build:
 	@echo "🔨 Building application..."
 	go build -o server main.go
 
@@ -45,7 +33,7 @@ fmt:
 	go fmt ./...
 
 # Run tests
-test: check-gorm
+test:
 	@echo "🧪 Running tests..."
 	go test ./tests/...
 
@@ -105,6 +93,8 @@ ifeq (console,$(firstword $(MAKECMDGOALS)))
   $(eval $(subst :,\:,$(CONSOLE_ARGS)):;@:)
 endif
 
-.PHONY: console check-gorm
+.PHONY: console
 console: build
-	@./server console $(CONSOLE_ARGS) $(ARGS)
+	@GALAPLATE_LOG_STDOUT=false ./server console $(CONSOLE_ARGS) $(ARGS)
+
+

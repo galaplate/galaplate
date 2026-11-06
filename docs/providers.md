@@ -14,6 +14,14 @@ import _ "github.com/galaplate/galaplate/providers"
 
 ## Writing a Provider
 
+Generate one with:
+
+```bash
+go run main.go console make:provider Billing --routes --commands
+```
+
+This writes `providers/billing_service_provider.go`. `--routes` and `--commands` add `Routes()` and `Commands()` stubs; leave them off for a provider that only needs `Register()`/`Boot()`. Because `providers` is already imported by `main.go` and the tests, the new provider is picked up with no further wiring.
+
 A provider implements `Register()` and `Boot()` and adds itself in `init()`:
 
 ```go
@@ -72,7 +80,7 @@ A package then uses `provider.Middleware("auth")`. A missing alias panics at sta
 A provider can live in its own Go module. Keep the implementation under `internal/` so only the provider is importable, and install it with a blank import:
 
 ```go
-import _ "github.com/acme/galaplate-billing"
+import _ "github.com/acme/billing"
 ```
 
-Its routes and commands are registered without touching `router/router.go` or `main.go`.
+Its routes and commands are registered without touching `router/router.go` or `main.go`. See [Creating a Package](/packages) for the full guide.
